@@ -61,14 +61,16 @@
             background-color: #eff6ff;
         }
 
-        /* 플로팅 다중 체크 드롭다운 레이어 */
+        /* 플로팅 다중 체크 드롭다운 레이어 (모서리 깨짐 방지 최적화) */
         .ws-multicheck-layer {
             position: fixed;
             z-index: 99999;
             width: 260px;
             background-color: #ffffff;
             border: 1px solid #2563eb;
-            border-radius: 6px;
+            border-radius: 8px;
+            overflow: hidden;                 /* [핵심] 자식 헤더/푸터 배경이 모서리 테두리를 덮어 깨지는 현상 방지 */
+            background-clip: padding-box;     /* 테두리와 배경 서브픽셀 앤티에일리어싱 매끄럽게 처리 */
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             font-size: 12px;
             color: #1e293b;
@@ -322,6 +324,8 @@
     // 초기화
     window.onload = function() {
         scwin.renderTable();
+        
+        // 1. 외부 클릭 시 닫기
         document.addEventListener("mousedown", (e) => {
             const layer = document.getElementById("ws_floating_multicheck");
             if (!layer || layer.style.display !== "block") return;
@@ -329,6 +333,16 @@
                 scwin.fn_closeMultiCheckLayer();
             }
         });
+
+        // 2. 외부 스크롤 시 닫기 (capture: true로 부모 및 윈도우 스크롤 감지, 레이어 자체 내부 스크롤은 유지)
+        window.addEventListener("scroll", (e) => {
+            const layer = document.getElementById("ws_floating_multicheck");
+            if (!layer || layer.style.display !== "block") return;
+            if (e.target && (e.target === layer || layer.contains(e.target))) {
+                return;
+            }
+            scwin.fn_closeMultiCheckLayer();
+        }, true);
     };
 </script>
 </body>

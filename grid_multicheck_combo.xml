@@ -60,14 +60,16 @@
                 padding: 6px 8px !important;
             }
 
-            /* 플로팅 다중 체크 드롭다운 레이어 */
+            /* 플로팅 다중 체크 드롭다운 레이어 (모서리 깨짐 방지 최적화) */
             .ws-multicheck-layer {
                 position: fixed;
                 z-index: 99999;
                 width: 260px;
                 background-color: #ffffff;
                 border: 1px solid #2563eb;
-                border-radius: 6px;
+                border-radius: 8px;
+                overflow: hidden;                 /* [핵심] 자식 헤더/푸터 배경이 둥근 모서리를 덮어 깨지는 현상 완벽 방지 */
+                background-clip: padding-box;     /* 테두리와 배경 렌더링 서브픽셀 앤티에일리어싱 매끄럽게 처리 */
                 box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
                 font-size: 12px;
@@ -169,11 +171,14 @@
 
             // 외부 클릭 시 플로팅 레이어 닫기 이벤트 등록
             document.addEventListener("mousedown", scwin.fn_handleOutsideClick);
+            // [추가] 외부 스크롤 시 플로팅 레이어 닫기 이벤트 등록 (capture: true로 그리드 및 부모 컨테이너 스크롤 감지)
+            window.addEventListener("scroll", scwin.fn_handleOutsideScroll, true);
         };
 
         scwin.onpageunload = function() {
             // 페이지 언로드 시 이벤트 및 동적 DOM 메모리 해제
             document.removeEventListener("mousedown", scwin.fn_handleOutsideClick);
+            window.removeEventListener("scroll", scwin.fn_handleOutsideScroll, true);
             var el = document.getElementById("ws_floating_multicheck");
             if (el && el.parentNode) {
                 el.parentNode.removeChild(el);
@@ -399,6 +404,23 @@
             if (!layer.contains(e.target) && !e.target.closest(".cell-multiline")) {
                 scwin.fn_closeMultiCheckLayer();
             }
+        };
+
+        /**
+         * [추가] 팝업 영역 바깥 스크롤 시 자동 닫힘 처리
+         * - 레이어 내부 스크롤(예: 체크박스 목록 스크롤)은 유지
+         * - 외부 윈도우 스크롤 또는 그리드 내부 스크롤 발생 시 즉시 닫기
+         */
+        scwin.fn_handleOutsideScroll = function(e) {
+            var layer = document.getElementById("ws_floating_multicheck");
+            if (!layer || layer.style.display !== "block") return;
+
+            // 스크롤 이벤트 발생 위치가 레이어 내부이면 무시 (체크 목록 스크롤 허용)
+            if (e.target && (e.target === layer || layer.contains(e.target))) {
+                return;
+            }
+
+            scwin.fn_closeMultiCheckLayer();
         };
         ]]></script>
     </head>
