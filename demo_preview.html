@@ -111,6 +111,11 @@
         .ws-multicheck-item:hover {
             background-color: #f1f5f9;
         }
+        .ws-multicheck-item.is-checked {
+            background-color: #eff6ff;
+            font-weight: 500;
+            color: #1d4ed8;
+        }
         .ws-multicheck-item input[type="checkbox"] {
             margin: 0 8px 0 0;
             cursor: pointer;
@@ -266,20 +271,40 @@
             container.innerHTML = "";
             const lower = (keyword || "").toLowerCase().trim();
 
+            const items = [];
             for (let code in scwin.itemCodeMap) {
                 const label = scwin.itemCodeMap[code];
                 if (!lower || label.toLowerCase().includes(lower) || code.includes(lower)) {
                     const isChecked = selectedCodes.includes(code);
-                    const item = document.createElement("label");
-                    item.className = "ws-multicheck-item";
-                    item.innerHTML = `
-                        <input type="checkbox" value="${code}" ${isChecked ? 'checked' : ''} />
-                        <span>[${code}] ${label}</span>
-                    `;
-                    container.appendChild(item);
+                    items.push({ code, label, isChecked });
                 }
             }
-            if (container.children.length === 0) {
+
+            // 체크된 항목 우선 상단 정렬
+            items.sort((a, b) => {
+                if (a.isChecked && !b.isChecked) return -1;
+                if (!a.isChecked && b.isChecked) return 1;
+                return a.code.localeCompare(b.code);
+            });
+
+            items.forEach(it => {
+                const item = document.createElement("label");
+                item.className = "ws-multicheck-item" + (it.isChecked ? " is-checked" : "");
+                item.innerHTML = `
+                    <input type="checkbox" value="${it.code}" ${it.isChecked ? 'checked' : ''} />
+                    <span>[${it.code}] ${it.label}</span>
+                `;
+                item.querySelector("input").addEventListener("change", (e) => {
+                    if (e.target.checked) {
+                        e.target.closest("label").classList.add("is-checked");
+                    } else {
+                        e.target.closest("label").classList.remove("is-checked");
+                    }
+                });
+                container.appendChild(item);
+            });
+
+            if (items.length === 0) {
                 container.innerHTML = '<div style="padding:15px; text-align:center; color:#94a3b8;">일치하는 항목이 없습니다.</div>';
             }
         },

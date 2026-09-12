@@ -115,6 +115,11 @@
             .ws-multicheck-item:hover {
                 background-color: #f1f5f9;
             }
+            .ws-multicheck-item.is-checked {
+                background-color: #eff6ff;
+                font-weight: 500;
+                color: #1d4ed8;
+            }
             .ws-multicheck-item input[type="checkbox"] {
                 margin: 0 8px 0 0;
                 cursor: pointer;
@@ -340,7 +345,8 @@
         };
 
         /**
-         * 검색 키워드에 따라 체크박스 목록 실시간 필터링 렌더링
+         * 검색 키워드에 따라 체크박스 목록 실시간 필터링 및 자동 정렬 렌더링
+         * [요구사항] 선택(체크)된 항목은 목록 상단(위)으로 자동 정렬
          */
         scwin.fn_renderCheckList = function(keyword, selectedCodes) {
             var listContainer = document.getElementById("ws_multicheck_list");
@@ -349,24 +355,52 @@
             listContainer.innerHTML = "";
             var lowerKeyword = (keyword || "").toLowerCase().trim();
 
+            // 1. 검색 조건에 일치하는 항목 수집
+            var items = [];
             for (var code in scwin.itemCodeMap) {
                 var label = scwin.itemCodeMap[code];
                 
                 // 검색 조건 검사: 라벨명 또는 코드에 키워드 포함 시 노출
                 if (lowerKeyword === "" || label.toLowerCase().indexOf(lowerKeyword) > -1 || code.indexOf(lowerKeyword) > -1) {
                     var isChecked = selectedCodes.indexOf(code) > -1;
-                    
-                    var itemLabel = document.createElement("label");
-                    itemLabel.className = "ws-multicheck-item";
-                    itemLabel.innerHTML = 
-                        '<input type="checkbox" value="' + code + '" ' + (isChecked ? 'checked' : '') + ' />' +
-                        '<span>[' + code + '] ' + label + '</span>';
-                        
-                    listContainer.appendChild(itemLabel);
+                    items.push({
+                        code: code,
+                        label: label,
+                        isChecked: isChecked
+                    });
                 }
             }
 
-            if (listContainer.children.length === 0) {
+            // 2. [체크 항목 상단 자동 정렬]
+            // isChecked가 true인 항목이 위로(-1), false인 항목이 아래로(1)
+            items.sort(function(a, b) {
+                if (a.isChecked && !b.isChecked) return -1;
+                if (!a.isChecked && b.isChecked) return 1;
+                return a.code.localeCompare(b.code); // 동일 체크 상태 내에서는 코드순 정렬
+            });
+
+            // 3. DOM 요소 생성 및 렌더링
+            for (var i = 0; i < items.length; i++) {
+                var it = items[i];
+                var itemLabel = document.createElement("label");
+                itemLabel.className = "ws-multicheck-item" + (it.isChecked ? " is-checked" : "");
+                itemLabel.innerHTML = 
+                    '<input type="checkbox" value="' + it.code + '" ' + (it.isChecked ? 'checked' : '') + ' />' +
+                    '<span>[' + it.code + '] ' + it.label + '</span>';
+                    
+                // 체크 토글 시 실시간 하이라이트 스타일 클래스 반영
+                itemLabel.querySelector("input").addEventListener("change", function(e) {
+                    if (e.target.checked) {
+                        e.target.closest("label").classList.add("is-checked");
+                    } else {
+                        e.target.closest("label").classList.remove("is-checked");
+                    }
+                });
+
+                listContainer.appendChild(itemLabel);
+            }
+
+            if (items.length === 0) {
                 listContainer.innerHTML = '<div style="padding:15px; text-align:center; color:#94a3b8;">일치하는 항목이 없습니다.</div>';
             }
         };
