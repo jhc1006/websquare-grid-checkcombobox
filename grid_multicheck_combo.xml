@@ -210,6 +210,35 @@
         };
 
         /**
+         * [호환성 헬퍼] WebSquare5 버전별 안전한 GridView 셀 TD DOM Element 취득 함수
+         * WebSquare5 공식 엔진은 'getCellDom' 메서드를 제공하지 않으므로,
+         * 1) 표준 셀 ID ({gridId}_cell_{row}_{col})
+         * 2) 클릭 이벤트 객체(event.target.closest('td'))
+         * 3) getCellElement API 순서로 fallback 처리합니다.
+         */
+        scwin.fn_getGridCellDom = function(gridObj, row, col) {
+            var gridId = (typeof gridObj.getID === "function") ? gridObj.getID() : gridObj.id;
+
+            // 1순위: WebSquare5 정식 셀 DOM ID 패턴 ({gridId}_cell_{row}_{col})
+            var cellDom = document.getElementById(gridId + "_cell_" + row + "_" + col);
+            if (cellDom) return cellDom;
+
+            // 2순위: 브라우저 이벤트 객체의 타겟에서 TD 탐색
+            var evt = window.event;
+            if (evt && evt.target) {
+                var td = evt.target.closest ? evt.target.closest("td") : null;
+                if (td) return td;
+            }
+
+            // 3순위: 일부 SP 버전에 존재하는 getCellElement API 체크
+            if (typeof gridObj.getCellElement === "function") {
+                return gridObj.getCellElement(row, col);
+            }
+
+            return null;
+        };
+
+        /**
          * [요구사항 3] GridView 셀 클릭 이벤트
          * 'taskCodes' 컬럼 클릭 시 플로팅 다중 체크 레이어 호출
          */
@@ -221,8 +250,8 @@
                 return;
             }
 
-            // 웹스퀘어 getCellDom API로 클릭한 셀 DOM Element 획득
-            var cellDom = grd_main.getCellDom(row, col);
+            // WebSquare5 안전한 셀 DOM Element 획득 (getCellDom 대체)
+            var cellDom = scwin.fn_getGridCellDom(grd_main, row, col);
             if (!cellDom) return;
 
             // 현재 셀의 선택된 코드 목록 추출
