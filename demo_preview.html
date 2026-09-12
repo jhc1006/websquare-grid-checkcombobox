@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSquare5 GridView CheckComboBox 데모 프리뷰</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "Segoe UI", Roboto, sans-serif;
+            margin: 30px;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        h2 {
+            margin-bottom: 8px;
+        }
+        p.subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .container {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            max-width: 900px;
+        }
+
+        /* WebSquare GridView 모사 CSS */
+        .w2grid {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #cbd5e1;
+            font-size: 13px;
+        }
+        .w2grid th {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 10px 8px;
+            border: 1px solid #cbd5e1;
+            font-weight: 600;
+        }
+        .w2grid td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            vertical-align: middle;
+        }
+
+        /* [핵심 CSS] 그리드 셀 내부 개행(<br/>) 및 멀티라인 자동 높이 */
+        .w2grid .cell-multiline {
+            white-space: normal !important;
+            word-break: break-all !important;
+            line-height: 1.6 !important;
+            height: auto !important;
+            cursor: pointer;
+            background-color: #fdfefe;
+            transition: background 0.15s;
+        }
+        .w2grid .cell-multiline:hover {
+            background-color: #eff6ff;
+        }
+
+        /* 플로팅 다중 체크 드롭다운 레이어 */
+        .ws-multicheck-layer {
+            position: fixed;
+            z-index: 99999;
+            width: 260px;
+            background-color: #ffffff;
+            border: 1px solid #2563eb;
+            border-radius: 6px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            font-size: 12px;
+            color: #1e293b;
+            box-sizing: border-box;
+            display: none;
+        }
+        .ws-multicheck-header {
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .ws-multicheck-search {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            outline: none;
+            box-sizing: border-box;
+            font-size: 12px;
+        }
+        .ws-multicheck-search:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+        }
+        .ws-multicheck-body {
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 6px 0;
+        }
+        .ws-multicheck-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            user-select: none;
+        }
+        .ws-multicheck-item:hover {
+            background-color: #f1f5f9;
+        }
+        .ws-multicheck-item input[type="checkbox"] {
+            margin: 0 8px 0 0;
+            cursor: pointer;
+        }
+        .ws-multicheck-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            padding: 8px 10px;
+            border-top: 1px solid #e2e8f0;
+            background-color: #f8fafc;
+        }
+        .ws-btn-apply {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .ws-btn-close {
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .ws-btn-apply:hover { background: #1d4ed8; }
+        .ws-btn-close:hover { background: #cbd5e1; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>WebSquare5 GridView 검색형 다중체크 & 줄바꿈 렌더링 데모</h2>
+    <p class="subtitle"><strong>'담당 업무 (다중 선택)'</strong> 셀을 클릭하면 플로팅 검색/체크 레이어가 열리며, 선택 후 [적용] 시 셀 내부에서 &lt;br/&gt; 개행 처리됩니다.</p>
+
+    <table class="w2grid" id="grd_main">
+        <thead>
+            <tr>
+                <th style="width: 60px;">순번</th>
+                <th style="width: 120px;">담당자</th>
+                <th style="width: 300px;">담당 업무 (다중 선택) 💡 클릭</th>
+                <th style="width: 160px;">비고</th>
+            </tr>
+        </thead>
+        <tbody id="grd_tbody">
+            <!-- JS 동적 렌더링 -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // WebSquare scwin 컨텍스트 시뮬레이션
+    const scwin = {
+        itemCodeMap: {
+            "01": "기획/전략 수립",
+            "02": "화면 설계 및 기획",
+            "03": "UI/UX 컴포넌트 개발",
+            "04": "백엔드 API 연동",
+            "05": "품질 테스트 및 QA",
+            "06": "서버 배포 및 모니터링",
+            "07": "사용자 매뉴얼 작성"
+        },
+        dataList: [
+            { seq: "1", userName: "홍길동 수석", taskCodes: "01,03", remark: "화면 개발" },
+            { seq: "2", userName: "이순신 책임", taskCodes: "02,04,06", remark: "아키텍처/배포" },
+            { seq: "3", userName: "강감찬 선임", taskCodes: "05", remark: "QA 총괄" },
+            { seq: "4", userName: "유관순 연구원", taskCodes: "", remark: "신규 배정 예정" }
+        ],
+
+        // customFormatter 로직
+        fn_formatMultiCheck: function(data) {
+            if (!data || typeof data !== "string" || data.trim() === "") {
+                return '<span style="color:#94a3b8; font-style:italic;">(선택 없음)</span>';
+            }
+            const codes = data.split(",");
+            const labels = [];
+            for (let code of codes) {
+                code = code.trim();
+                if (code) {
+                    labels.push(scwin.itemCodeMap[code] || code);
+                }
+            }
+            return labels.length ? labels.join("<br/>") : '<span style="color:#94a3b8; font-style:italic;">(선택 없음)</span>';
+        },
+
+        // 플로팅 레이어 오픈
+        fn_openMultiCheckLayer: function(cellDom, rowIndex) {
+            let layer = document.getElementById("ws_floating_multicheck");
+            if (!layer) {
+                layer = document.createElement("div");
+                layer.id = "ws_floating_multicheck";
+                layer.className = "ws-multicheck-layer";
+                document.body.appendChild(layer);
+            }
+
+            layer.dataset.targetRow = rowIndex;
+
+            const rect = cellDom.getBoundingClientRect();
+            let topPos = rect.bottom + window.scrollY;
+            let leftPos = rect.left + window.scrollX;
+
+            if (rect.bottom + 280 > window.innerHeight) {
+                topPos = Math.max(rect.top + window.scrollY - 280, 10);
+            }
+
+            layer.style.top = topPos + "px";
+            layer.style.left = leftPos + "px";
+            layer.style.width = Math.max(rect.width, 260) + "px";
+
+            layer.innerHTML = `
+                <div class="ws-multicheck-header">
+                    <input type="text" id="ws_multicheck_input" class="ws-multicheck-search" placeholder="업무명 또는 코드 검색..." autocomplete="off" />
+                </div>
+                <div class="ws-multicheck-body" id="ws_multicheck_list"></div>
+                <div class="ws-multicheck-footer">
+                    <button type="button" class="ws-btn-apply" id="ws_btn_apply">적용</button>
+                    <button type="button" class="ws-btn-close" id="ws_btn_close">닫기</button>
+                </div>
+            `;
+            layer.style.display = "block";
+
+            const rawVal = scwin.dataList[rowIndex].taskCodes || "";
+            const selectedCodes = rawVal ? rawVal.split(",").map(c => c.trim()) : [];
+
+            scwin.fn_renderCheckList("", selectedCodes);
+
+            const searchInput = document.getElementById("ws_multicheck_input");
+            searchInput.focus();
+            searchInput.addEventListener("input", (e) => {
+                const checked = scwin.fn_getCurrentlyCheckedCodes();
+                scwin.fn_renderCheckList(e.target.value, checked);
+            });
+
+            document.getElementById("ws_btn_apply").onclick = function() {
+                const checked = scwin.fn_getCurrentlyCheckedCodes();
+                scwin.dataList[rowIndex].taskCodes = checked.join(",");
+                scwin.renderTable();
+                scwin.fn_closeMultiCheckLayer();
+            };
+
+            document.getElementById("ws_btn_close").onclick = scwin.fn_closeMultiCheckLayer;
+        },
+
+        fn_renderCheckList: function(keyword, selectedCodes) {
+            const container = document.getElementById("ws_multicheck_list");
+            if (!container) return;
+            container.innerHTML = "";
+            const lower = (keyword || "").toLowerCase().trim();
+
+            for (let code in scwin.itemCodeMap) {
+                const label = scwin.itemCodeMap[code];
+                if (!lower || label.toLowerCase().includes(lower) || code.includes(lower)) {
+                    const isChecked = selectedCodes.includes(code);
+                    const item = document.createElement("label");
+                    item.className = "ws-multicheck-item";
+                    item.innerHTML = `
+                        <input type="checkbox" value="${code}" ${isChecked ? 'checked' : ''} />
+                        <span>[${code}] ${label}</span>
+                    `;
+                    container.appendChild(item);
+                }
+            }
+            if (container.children.length === 0) {
+                container.innerHTML = '<div style="padding:15px; text-align:center; color:#94a3b8;">일치하는 항목이 없습니다.</div>';
+            }
+        },
+
+        fn_getCurrentlyCheckedCodes: function() {
+            const list = [];
+            document.querySelectorAll("#ws_multicheck_list input[type='checkbox']:checked").forEach(cb => {
+                list.push(cb.value);
+            });
+            return list;
+        },
+
+        fn_closeMultiCheckLayer: function() {
+            const layer = document.getElementById("ws_floating_multicheck");
+            if (layer) layer.style.display = "none";
+        },
+
+        renderTable: function() {
+            const tbody = document.getElementById("grd_tbody");
+            tbody.innerHTML = "";
+            scwin.dataList.forEach((row, idx) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="text-align:center;">${row.seq}</td>
+                    <td style="text-align:center;">${row.userName}</td>
+                    <td class="cell-multiline" data-row="${idx}">${scwin.fn_formatMultiCheck(row.taskCodes)}</td>
+                    <td>${row.remark}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // 셀 클릭 이벤트 바인딩
+            tbody.querySelectorAll(".cell-multiline").forEach(cell => {
+                cell.onclick = function(e) {
+                    const rIdx = parseInt(this.dataset.row, 10);
+                    scwin.fn_openMultiCheckLayer(this, rIdx);
+                };
+            });
+        }
+    };
+
+    // 초기화
+    window.onload = function() {
+        scwin.renderTable();
+        document.addEventListener("mousedown", (e) => {
+            const layer = document.getElementById("ws_floating_multicheck");
+            if (!layer || layer.style.display !== "block") return;
+            if (!layer.contains(e.target) && !e.target.closest(".cell-multiline")) {
+                scwin.fn_closeMultiCheckLayer();
+            }
+        });
+    };
+</script>
+</body>
+</html>
