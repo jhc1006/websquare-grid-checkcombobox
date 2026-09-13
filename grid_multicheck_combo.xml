@@ -288,6 +288,14 @@
             layer.dataset.targetRow = targetRow;
             layer.dataset.targetColId = colId;
 
+            // [핵심] 검색 전/후 체크 항목 유실 방지를 위한 상태 맵(Map) 초기화
+            layer.checkedCodeMap = {};
+            for (var k = 0; k < selectedCodes.length; k++) {
+                if (selectedCodes[k]) {
+                    layer.checkedCodeMap[selectedCodes[k]] = true;
+                }
+            }
+
             // 1. 레이어 템플릿 마크업 주입
             layer.innerHTML = 
                 '<div class="ws-multicheck-header">' +
@@ -300,7 +308,7 @@
                 '</div>';
 
             // 2. 체크박스 항목 리스트 선행 렌더링 (실제 콘텐츠 높이 측정을 위함)
-            scwin.fn_renderCheckList("", selectedCodes);
+            scwin.fn_renderCheckList("", layer.checkedCodeMap);
 
             // 3. 레이어 임시 노출 및 너비 지정
             layer.style.display = "block";
@@ -336,14 +344,19 @@
             searchInput.focus();
             searchInput.addEventListener("input", function(e) {
                 var keyword = e.target.value;
-                // 검색 중에도 직전 체크 상태 유지
-                var currentChecked = scwin.fn_getCurrentlyCheckedCodes();
-                scwin.fn_renderCheckList(keyword, currentChecked);
+                // [핵심] DOM이 아닌 layer.checkedCodeMap을 전달하므로 검색 전/후 체크 항목이 완벽히 유지됨
+                scwin.fn_renderCheckList(keyword, layer.checkedCodeMap);
             });
 
             // [적용] 버튼 클릭 시
             document.getElementById("ws_btn_apply").onclick = function() {
-                var finalCodes = scwin.fn_getCurrentlyCheckedCodes();
+                // DOM이 아닌 상태 맵(layer.checkedCodeMap)에서 전체 선택 코드 추출
+                var finalCodes = [];
+                for (var code in layer.checkedCodeMap) {
+                    if (layer.checkedCodeMap[code]) {
+                        finalCodes.push(code);
+                    }
+                }
                 var combinedValue = finalCodes.join(",");
 
                 // WebSquare DataList 데이터 갱신 -> customFormatter 자동 재호출되어 화면 갱신
@@ -359,9 +372,11 @@
 
         /**
          * 검색 키워드에 따라 체크박스 목록 실시간 필터링 및 자동 정렬 렌더링
-         * [요구사항] 선택(체크)된 항목은 목록 상단(위)으로 자동 정렬
+         * [요구사항] 
+         * 1) 선택(체크)된 항목은 목록 상단(위)으로 자동 정렬
+         * 2) 검색 전 체크 항목과 검색 후 체크 항목이 완벽히 동기화 및 유지
          */
-        scwin.fn_renderCheckList = function(keyword, selectedCodes) {
+        scwin.fn_renderCheckList = function(keyword, checkedCodeMap) {
             var listContainer = document.getElementById("ws_multicheck_list");
             if (!listContainer) return;
 
@@ -375,7 +390,7 @@
                 
                 // 검색 조건 검사: 라벨명 또는 코드에 키워드 포함 시 노출
                 if (lowerKeyword === "" || label.toLowerCase().indexOf(lowerKeyword) > -1 || code.indexOf(lowerKeyword) > -1) {
-                    var isChecked = selectedCodes.indexOf(code) > -1;
+                    var isChecked = !!(checkedCodeMap && checkedCodeMap[code]);
                     items.push({
                         code: code,
                         label: label,
@@ -401,12 +416,15 @@
                     '<input type="checkbox" value="' + it.code + '" ' + (it.isChecked ? 'checked' : '') + ' />' +
                     '<span>[' + it.code + '] ' + it.label + '</span>';
                     
-                // 체크 토글 시 실시간 하이라이트 스타일 클래스 반영
+                // [핵심] 체크 토글 시 상태 맵(checkedCodeMap)에 즉시 동기화
                 itemLabel.querySelector("input").addEventListener("change", function(e) {
-                    if (e.target.checked) {
-                        e.target.closest("label").classList.add("is-checked");
+                    var codeVal = this.value;
+                    if (this.checked) {
+                        checkedCodeMap[codeVal] = true;
+                        this.closest("label").classList.add("is-checked");
                     } else {
-                        e.target.closest("label").classList.remove("is-checked");
+                        delete checkedCodeMap[codeVal];
+                        this.closest("label").classList.remove("is-checked");
                     }
                 });
 

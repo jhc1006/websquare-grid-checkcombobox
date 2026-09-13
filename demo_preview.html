@@ -219,6 +219,14 @@
 
             layer.dataset.targetRow = rowIndex;
 
+            // 검색 전/후 체크 항목 유실 방지 상태 맵
+            layer.checkedCodeMap = {};
+            const rawVal = scwin.dataList[rowIndex].taskCodes || "";
+            const selectedCodes = rawVal ? rawVal.split(",").map(c => c.trim()) : [];
+            selectedCodes.forEach(code => {
+                if (code) layer.checkedCodeMap[code] = true;
+            });
+
             layer.innerHTML = `
                 <div class="ws-multicheck-header">
                     <input type="text" id="ws_multicheck_input" class="ws-multicheck-search" placeholder="업무명 또는 코드 검색..." autocomplete="off" />
@@ -230,10 +238,7 @@
                 </div>
             `;
 
-            const rawVal = scwin.dataList[rowIndex].taskCodes || "";
-            const selectedCodes = rawVal ? rawVal.split(",").map(c => c.trim()) : [];
-
-            scwin.fn_renderCheckList("", selectedCodes);
+            scwin.fn_renderCheckList("", layer.checkedCodeMap);
 
             layer.style.display = "block";
             layer.style.visibility = "hidden";
@@ -262,13 +267,13 @@
             const searchInput = document.getElementById("ws_multicheck_input");
             searchInput.focus();
             searchInput.addEventListener("input", (e) => {
-                const checked = scwin.fn_getCurrentlyCheckedCodes();
-                scwin.fn_renderCheckList(e.target.value, checked);
+                // 상태 맵(layer.checkedCodeMap)을 그대로 전달하여 검색 전/후 체크 항목 영구 보존
+                scwin.fn_renderCheckList(e.target.value, layer.checkedCodeMap);
             });
 
             document.getElementById("ws_btn_apply").onclick = function() {
-                const checked = scwin.fn_getCurrentlyCheckedCodes();
-                scwin.dataList[rowIndex].taskCodes = checked.join(",");
+                const finalCodes = Object.keys(layer.checkedCodeMap);
+                scwin.dataList[rowIndex].taskCodes = finalCodes.join(",");
                 scwin.renderTable();
                 scwin.fn_closeMultiCheckLayer();
             };
@@ -276,7 +281,7 @@
             document.getElementById("ws_btn_close").onclick = scwin.fn_closeMultiCheckLayer;
         },
 
-        fn_renderCheckList: function(keyword, selectedCodes) {
+        fn_renderCheckList: function(keyword, checkedCodeMap) {
             const container = document.getElementById("ws_multicheck_list");
             if (!container) return;
             container.innerHTML = "";
@@ -286,7 +291,7 @@
             for (let code in scwin.itemCodeMap) {
                 const label = scwin.itemCodeMap[code];
                 if (!lower || label.toLowerCase().includes(lower) || code.includes(lower)) {
-                    const isChecked = selectedCodes.includes(code);
+                    const isChecked = !!(checkedCodeMap && checkedCodeMap[code]);
                     items.push({ code, label, isChecked });
                 }
             }
@@ -305,11 +310,14 @@
                     <input type="checkbox" value="${it.code}" ${it.isChecked ? 'checked' : ''} />
                     <span>[${it.code}] ${it.label}</span>
                 `;
-                item.querySelector("input").addEventListener("change", (e) => {
-                    if (e.target.checked) {
-                        e.target.closest("label").classList.add("is-checked");
+                item.querySelector("input").addEventListener("change", function(e) {
+                    const val = this.value;
+                    if (this.checked) {
+                        checkedCodeMap[val] = true;
+                        this.closest("label").classList.add("is-checked");
                     } else {
-                        e.target.closest("label").classList.remove("is-checked");
+                        delete checkedCodeMap[val];
+                        this.closest("label").classList.remove("is-checked");
                     }
                 });
                 container.appendChild(item);
