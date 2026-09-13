@@ -219,18 +219,6 @@
 
             layer.dataset.targetRow = rowIndex;
 
-            const rect = cellDom.getBoundingClientRect();
-            let topPos = rect.bottom + window.scrollY;
-            let leftPos = rect.left + window.scrollX;
-
-            if (rect.bottom + 280 > window.innerHeight) {
-                topPos = Math.max(rect.top + window.scrollY - 280, 10);
-            }
-
-            layer.style.top = topPos + "px";
-            layer.style.left = leftPos + "px";
-            layer.style.width = Math.max(rect.width, 260) + "px";
-
             layer.innerHTML = `
                 <div class="ws-multicheck-header">
                     <input type="text" id="ws_multicheck_input" class="ws-multicheck-search" placeholder="업무명 또는 코드 검색..." autocomplete="off" />
@@ -241,12 +229,35 @@
                     <button type="button" class="ws-btn-close" id="ws_btn_close">닫기</button>
                 </div>
             `;
-            layer.style.display = "block";
 
             const rawVal = scwin.dataList[rowIndex].taskCodes || "";
             const selectedCodes = rawVal ? rawVal.split(",").map(c => c.trim()) : [];
 
             scwin.fn_renderCheckList("", selectedCodes);
+
+            layer.style.display = "block";
+            layer.style.visibility = "hidden";
+            layer.style.width = Math.max(cellDom.getBoundingClientRect().width, 260) + "px";
+
+            const rect = cellDom.getBoundingClientRect();
+            const leftPos = rect.left + window.scrollX;
+            const layerHeight = layer.offsetHeight || 280;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            const spaceAbove = rect.top;
+            let topPos;
+
+            // 밑에 공간이 적으면 바로 위에 레이어 표시
+            if (spaceBelow < layerHeight && spaceAbove >= layerHeight) {
+                topPos = rect.top + window.scrollY - layerHeight - 4;
+            } else if (spaceBelow < layerHeight && spaceAbove > spaceBelow) {
+                topPos = Math.max(rect.top + window.scrollY - layerHeight - 4, window.scrollY + 10);
+            } else {
+                topPos = rect.bottom + window.scrollY + 4;
+            }
+
+            layer.style.top = topPos + "px";
+            layer.style.left = leftPos + "px";
+            layer.style.visibility = "visible";
 
             const searchInput = document.getElementById("ws_multicheck_input");
             searchInput.focus();
