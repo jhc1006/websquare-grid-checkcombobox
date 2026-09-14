@@ -43,6 +43,7 @@ WebSquare5의 GridView 내 특정 컬럼에서 **검색 기능이 있는 다중 
 
 * `grid_multicheck_combo.xml`: WebSquare5 표준 XML 컴포넌트 소스 (DataList, CSS, scwin 스크립트, GridView 마크업 포함)
 * `demo_preview.html`: 브라우저에서 더블 클릭하여 즉시 테스트해볼 수 있는 인터랙티브 시뮬레이터 데모
+* `SESSION_SUMMARY.md`: 개발 세션 질의응답(Q&A), 동적 탭 사전 로딩(Preload) 가이드, WebSquare confirm 연동 분석 등 총정리 문서
 
 ---
 
