@@ -7,195 +7,31 @@
         <w2:type>COMPONENT</w2:type>
         <w2:buildDate/>
         <xf:model>
-            <w2:dataCollection baseNode="map">
-                <!-- 1. 그리드 데이터셋(DataList) 정의 -->
-                <w2:dataList baseNode="list" repeatNode="map" id="dlt_sample" saveRemovedData="true">
-                    <w2:columnInfo>
-                        <w2:column id="seq" name="순번" dataType="text"></w2:column>
-                        <w2:column id="userName" name="담당자" dataType="text"></w2:column>
-                        <w2:column id="taskCodes" name="담당 업무" dataType="text"></w2:column>
-                        <w2:column id="remark" name="비고" dataType="text"></w2:column>
-                    </w2:columnInfo>
-                    <w2:data use="true">
-                        <w2:row>
-                            <seq><![CDATA[1]]></seq>
-                            <userName><![CDATA[홍길동 수석]]></userName>
-                            <taskCodes><![CDATA[01,03]]></taskCodes>
-                            <remark><![CDATA[화면 개발]]></remark>
-                        </w2:row>
-                        <w2:row>
-                            <seq><![CDATA[2]]></seq>
-                            <userName><![CDATA[이순신 책임]]></userName>
-                            <taskCodes><![CDATA[02,04,06]]></taskCodes>
-                            <remark><![CDATA[아키텍처/배포]]></remark>
-                        </w2:row>
-                        <w2:row>
-                            <seq><![CDATA[3]]></seq>
-                            <userName><![CDATA[강감찬 선임]]></userName>
-                            <taskCodes><![CDATA[05]]></taskCodes>
-                            <remark><![CDATA[QA 총괄]]></remark>
-                        </w2:row>
-                        <w2:row>
-                            <seq><![CDATA[4]]></seq>
-                            <userName><![CDATA[유관순 연구원]]></userName>
-                            <taskCodes><![CDATA[]]></taskCodes>
-                            <remark><![CDATA[신규 배정 예정]]></remark>
-                        </w2:row>
-                    </w2:data>
-                </w2:dataList>
-
-                <!-- 1-2. 탭 2: 프로젝트 팀 데이터셋(DataList) 정의 -->
-                <w2:dataList baseNode="list" repeatNode="map" id="dlt_team" saveRemovedData="true">
-                    <w2:columnInfo>
-                        <w2:column id="seq" name="순번" dataType="text"></w2:column>
-                        <w2:column id="teamName" name="팀명" dataType="text"></w2:column>
-                        <w2:column id="leader" name="팀장/담당" dataType="text"></w2:column>
-                        <w2:column id="taskCodes" name="팀 핵심 과업" dataType="text"></w2:column>
-                        <w2:column id="progress" name="진척도" dataType="text"></w2:column>
-                    </w2:columnInfo>
-                    <w2:data use="true">
-                        <w2:row>
-                            <seq><![CDATA[1]]></seq>
-                            <teamName><![CDATA[플랫폼 개발팀]]></teamName>
-                            <leader><![CDATA[최영 팀장]]></leader>
-                            <taskCodes><![CDATA[03,04,06]]></taskCodes>
-                            <progress><![CDATA[85%]]></progress>
-                        </w2:row>
-                        <w2:row>
-                            <seq><![CDATA[2]]></seq>
-                            <teamName><![CDATA[UI/UX 기획팀]]></teamName>
-                            <leader><![CDATA[신사임당 수석]]></leader>
-                            <taskCodes><![CDATA[01,02]]></taskCodes>
-                            <progress><![CDATA[92%]]></progress>
-                        </w2:row>
-                        <w2:row>
-                            <seq><![CDATA[3]]></seq>
-                            <teamName><![CDATA[품질보증 QA팀]]></teamName>
-                            <leader><![CDATA[정약용 선임]]></leader>
-                            <taskCodes><![CDATA[05,07]]></taskCodes>
-                            <progress><![CDATA[78%]]></progress>
-                        </w2:row>
-                        <w2:row>
-                            <seq><![CDATA[4]]></seq>
-                            <teamName><![CDATA[신규 클라우드 TF]]></teamName>
-                            <leader><![CDATA[장영실 책임]]></leader>
-                            <taskCodes><![CDATA[]]></taskCodes>
-                            <progress><![CDATA[15%]]></progress>
-                        </w2:row>
-                    </w2:data>
-                </w2:dataList>
-            </w2:dataCollection>
+            <w2:dataCollection baseNode="map"/>
             <w2:workflowCollection/>
         </xf:model>
 
-        <!-- 2. 전용 CSS 스타일 가이드 -->
+        <!-- 전용 CSS 스타일 -->
         <style type="text/css"><![CDATA[
-            /* 그리드 셀 내부 개행(<br/>) 및 멀티라인 높이 유연화 */
-            .w2grid .cell-multiline,
-            .w2grid .cell-multiline .w2grid_cell {
-                white-space: normal !important;
-                word-break: break-all !important;
-                line-height: 1.6 !important;
-                height: auto !important;
-                vertical-align: middle !important;
-                padding: 6px 8px !important;
-            }
-
-            /* 플로팅 다중 체크 드롭다운 레이어 (모서리 깨짐 방지 최적화) */
-            .ws-multicheck-layer {
-                position: fixed;
-                z-index: 99999;
-                width: 260px;
-                background-color: #ffffff;
-                border: 1px solid #2563eb;
-                border-radius: 8px;
-                overflow: hidden;                 /* [핵심] 자식 헤더/푸터 배경이 둥근 모서리를 덮어 깨지는 현상 완벽 방지 */
-                background-clip: padding-box;     /* 테두리와 배경 렌더링 서브픽셀 앤티에일리어싱 매끄럽게 처리 */
-                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Malgun Gothic", sans-serif;
-                font-size: 12px;
-                color: #1e293b;
-                box-sizing: border-box;
-                display: none;
-            }
-
-            /* 상단 검색 영역 */
-            .ws-multicheck-header {
-                padding: 8px;
-                border-bottom: 1px solid #e2e8f0;
-                background: #f8fafc;
-            }
-            .ws-multicheck-search {
+            /* 그리드 및 모달 공통 스타일 */
+            .w2grid {
                 width: 100%;
-                padding: 6px 10px;
+                border-collapse: collapse;
                 border: 1px solid #cbd5e1;
-                border-radius: 4px;
-                outline: none;
-                box-sizing: border-box;
-                font-size: 12px;
+                font-size: 13px;
             }
-            .ws-multicheck-search:focus {
-                border-color: #3b82f6;
-                box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
-            }
-
-            /* 체크박스 스크롤 목록 */
-            .ws-multicheck-body {
-                max-height: 180px;
-                overflow-y: auto;
-                padding: 6px 0;
-            }
-            .ws-multicheck-item {
-                display: flex;
-                align-items: center;
-                padding: 6px 12px;
-                cursor: pointer;
-                transition: background 0.15s;
-                user-select: none;
-            }
-            .ws-multicheck-item:hover {
+            .w2grid th {
                 background-color: #f1f5f9;
+                color: #334155;
+                padding: 10px 8px;
+                border: 1px solid #cbd5e1;
+                font-weight: 600;
             }
-            .ws-multicheck-item.is-checked {
-                background-color: #eff6ff;
-                font-weight: 500;
-                color: #1d4ed8;
+            .w2grid td {
+                border: 1px solid #e2e8f0;
+                padding: 8px;
+                vertical-align: middle;
             }
-            .ws-multicheck-item input[type="checkbox"] {
-                margin: 0 8px 0 0;
-                cursor: pointer;
-            }
-
-            /* 하단 액션 버튼 */
-            .ws-multicheck-footer {
-                display: flex;
-                justify-content: flex-end;
-                gap: 6px;
-                padding: 8px 10px;
-                border-top: 1px solid #e2e8f0;
-                background-color: #f8fafc;
-            }
-            .ws-btn-apply {
-                background: #2563eb;
-                color: #ffffff;
-                border: none;
-                padding: 5px 12px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 12px;
-                font-weight: 500;
-            }
-            .ws-btn-close {
-                background: #e2e8f0;
-                color: #475569;
-                border: none;
-                padding: 5px 12px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 12px;
-            }
-            .ws-btn-apply:hover { background: #1d4ed8; }
-            .ws-btn-close:hover { background: #cbd5e1; }
 
             /* 상단 전달사항 및 액션 컨트롤 영역 */
             .ws-top-control {
@@ -279,6 +115,7 @@
             .ws-preview-modal-header h3 {
                 margin: 0;
                 font-size: 16px;
+                font-weight: 700;
                 color: #1e293b;
             }
             .ws-btn-modal-close {
@@ -287,7 +124,6 @@
                 font-size: 18px;
                 color: #64748b;
                 cursor: pointer;
-                padding: 4px 8px;
             }
             .ws-btn-modal-close:hover { color: #0f172a; }
             .ws-preview-modal-body {
@@ -333,128 +169,22 @@
                 font-weight: 500;
             }
             .ws-btn-print:hover { background: #0284c7; }
-
-            /* 행 추가 버튼 */
-            .ws-btn-add-row {
-                background: #ffffff;
-                color: #2563eb;
-                border: 1px solid #2563eb;
-                padding: 6px 14px;
-                border-radius: 6px;
-                font-size: 13px;
-                font-weight: 600;
-                cursor: pointer;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                transition: all 0.15s;
-            }
-            .ws-btn-add-row:hover {
-                background: #eff6ff;
-                border-color: #1d4ed8;
-                color: #1d4ed8;
-            }
-
-            /* 담당자 조회 모달 스타일 */
-            .ws-mgr-modal-wrap {
-                position: fixed;
-                top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(15, 23, 42, 0.6);
-                backdrop-filter: blur(4px);
-                z-index: 100001;
-                display: none;
-                justify-content: center;
-                align-items: center;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-            .ws-mgr-modal {
-                background: #ffffff;
-                width: 100%;
-                max-width: 680px;
-                max-height: 85vh;
-                border-radius: 10px;
-                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-            }
-            .ws-mgr-modal-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 14px 18px;
-                background: #2563eb;
-                color: #ffffff;
-            }
-            .ws-mgr-modal-header h3 {
-                margin: 0;
-                font-size: 15px;
-                font-weight: 600;
-            }
-            .ws-mgr-modal-body {
-                padding: 16px;
-                overflow-y: auto;
-                flex: 1;
-            }
-            .ws-mgr-search-bar {
-                display: flex;
-                gap: 8px;
-                margin-bottom: 14px;
-            }
-            .ws-mgr-search-input {
-                flex: 1;
-                padding: 8px 12px;
-                border: 1px solid #cbd5e1;
-                border-radius: 6px;
-                font-size: 13px;
-                outline: none;
-            }
-            .ws-mgr-search-input:focus {
-                border-color: #2563eb;
-                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-            }
-            .ws-btn-mgr-search {
-                background: #2563eb;
-                color: #ffffff;
+            .ws-btn-close {
+                background: #e2e8f0;
+                color: #475569;
                 border: none;
-                padding: 8px 16px;
-                border-radius: 6px;
+                padding: 7px 14px;
+                border-radius: 4px;
                 cursor: pointer;
                 font-size: 13px;
-                font-weight: 600;
             }
-            .ws-btn-mgr-search:hover { background: #1d4ed8; }
-            .ws-btn-mgr-select {
-                background: #eff6ff;
-                color: #2563eb;
-                border: 1px solid #bfdbfe;
-                padding: 4px 10px;
-                border-radius: 4px;
-                font-size: 12px;
-                font-weight: 600;
-                cursor: pointer;
-            }
-            .ws-btn-mgr-select:hover {
-                background: #2563eb;
-                color: #ffffff;
-            }
-            .ws-mgr-modal-footer {
-                display: flex;
-                justify-content: flex-end;
-                padding: 10px 16px;
-                background: #f8fafc;
-                border-top: 1px solid #e2e8f0;
-            }
+            .ws-btn-close:hover { background: #cbd5e1; }
         ]]></style>
 
-        <!-- 3. WebSquare scwin 자바스크립트 소스 코드 -->
+        <!-- WebSquare scwin 자바스크립트 소스 코드 -->
         <script type="text/javascript" lazy="false"><![CDATA[
-        /**
-         * @target WebSquare5 Controller Script
-         */
         scwin.onpageload = function() {
-            // [요구사항 2] 공통 코드 매핑 객체 초기화 (코드: 라벨)
+            // 공통 업무 코드 매핑 객체 초기화
             scwin.itemCodeMap = {
                 "01": "기획/전략 수립",
                 "02": "화면 설계 및 기획",
@@ -465,118 +195,77 @@
                 "07": "사용자 매뉴얼 작성"
             };
 
-            // 외부 클릭 시 플로팅 레이어 닫기 이벤트 등록
-            document.addEventListener("mousedown", scwin.fn_handleOutsideClick);
-            // [추가] 외부 스크롤 시 플로팅 레이어 닫기 이벤트 등록 (capture: true로 그리드 및 부모 컨테이너 스크롤 감지)
-            window.addEventListener("scroll", scwin.fn_handleOutsideScroll, true);
-        };
-
-        scwin.onpageunload = function() {
-            // 페이지 언로드 시 이벤트 및 동적 DOM 메모리 해제
-            document.removeEventListener("mousedown", scwin.fn_handleOutsideClick);
-            window.removeEventListener("scroll", scwin.fn_handleOutsideScroll, true);
-            var el = document.getElementById("ws_floating_multicheck");
-            if (el && el.parentNode) {
-                el.parentNode.removeChild(el);
-            }
+            // [핵심 요구사항] 메인 페이지 로딩 시 개별 WFrame XML 페이지들을 동적으로 addTab()하여 사전 로딩
+            scwin.fn_initDynamicTabs();
         };
 
         /**
-         * [요구사항 2] customFormatter: 줄바꿈 포맷팅 함수
-         * "01,02,05" 형태의 코드 문자열을 라벨로 변환 후 <br/> 태그로 연결하여 반환
+         * [동적 탭 생성] tac_main.addTab() API를 호출하여 개별 WFrame 페이지들을 동적 생성 및 사전 로딩
          */
-        scwin.fn_formatMultiCheck = function(data, formattedData, rowIndex, colIndex) {
-            if (!data || typeof data !== "string" || data.trim() === "") {
-                // [수정] 엑셀 다운로드 시 placeholder('(선택 없음)') 노출 방지 -> 빈 값("") 출력
-                if (scwin._isExcelDownloading) {
-                    return "";
+        scwin.fn_initDynamicTabs = function() {
+            var tabConfigs = [
+                {
+                    id: "tab1",
+                    label: "1. 담당 업무 배정 (메인 그리드)",
+                    src: "tab1_task_assign.xml",
+                    closable: false
+                },
+                {
+                    id: "tab2",
+                    label: "2. 프로젝트 팀 현황 (보조 그리드)",
+                    src: "tab2_team_status.xml",
+                    closable: false
+                },
+                {
+                    id: "tab3",
+                    label: "3. 공통 코드 설정 및 가이드",
+                    src: "tab3_guide.xml",
+                    closable: false
                 }
-                return '<span style="color:#94a3b8; font-style:italic;">(선택 없음)</span>';
-            }
+            ];
 
-            var codeList = data.split(",");
-            var labelList = [];
-
-            for (var i = 0; i < codeList.length; i++) {
-                var code = codeList[i].trim();
-                if (code !== "") {
-                    // 코드 매핑 객체에서 라벨 탐색 (매핑 없으면 코드 원본 노출)
-                    var label = scwin.itemCodeMap[code] || code;
-                    labelList.push(label);
-                }
-            }
-
-            if (labelList.length === 0) {
-                return '<span style="color:#94a3b8; font-style:italic;">(선택 없음)</span>';
-            }
-
-            // HTML 태그 <br/>로 결합하여 셀 내부 개행 유도
-            return labelList.join("<br/>");
-        };
-
-        /**
-         * [포맷터] 담당자 컬럼 포맷터 (빈 값일 경우 '클릭하여 입력' placeholder 안내)
-         */
-        scwin.fn_formatUserName = function(data) {
-            if (!data || typeof data !== "string" || data.trim() === "") {
-                return '<span style="color:#94a3b8; font-style:italic;">클릭하여 입력</span>';
-            }
-            return data;
-        };
-
-        /**
-         * [호환성 헬퍼] WebSquare5 버전별 안전한 GridView 셀 TD DOM Element 취득 함수
-         * WebSquare5 공식 엔진은 'getCellDom' 메서드를 제공하지 않으므로,
-         * 1) 표준 셀 ID ({gridId}_cell_{row}_{col})
-         * 2) 클릭 이벤트 객체(event.target.closest('td'))
-         * 3) getCellElement API 순서로 fallback 처리합니다.
-         */
-        scwin.fn_getGridCellDom = function(gridObj, row, col) {
-            var gridId = (typeof gridObj.getID === "function") ? gridObj.getID() : gridObj.id;
-
-            // 1순위: WebSquare5 정식 셀 DOM ID 패턴 ({gridId}_cell_{row}_{col})
-            var cellDom = document.getElementById(gridId + "_cell_" + row + "_" + col);
-            if (cellDom) return cellDom;
-
-            // 2순위: 브라우저 이벤트 객체의 타겟에서 TD 탐색
-            var evt = window.event;
-            if (evt && evt.target) {
-                var td = evt.target.closest ? evt.target.closest("td") : null;
-                if (td) return td;
-            }
-
-            // 3순위: 일부 SP 버전에 존재하는 getCellElement API 체크
-            if (typeof gridObj.getCellElement === "function") {
-                return gridObj.getCellElement(row, col);
-            }
-
-            return null;
+            tabConfigs.forEach(function(tabInfo, idx) {
+                // WebSquare 공식 addTab API 호출
+                tac_main.addTab(
+                    tabInfo.id,
+                    {
+                        label: tabInfo.label,
+                        closable: tabInfo.closable,
+                        openAction: (idx === 0) ? "select" : "exist",
+                        alwaysDraw: true // [핵심] 메인 로딩 시 비활성 탭이라도 백그라운드 사전 로딩 완료
+                    },
+                    {
+                        src: tabInfo.src,
+                        wframe: true
+                    }
+                );
+            });
         };
 
         // [탭 이동 확인] 비동기 $p.confirm 콜백 후 프로그래밍 탭 이동 허용 플래그
         scwin._allowTabChange = false;
 
         /**
-         * [탭 변경 확인 헬퍼] 특정 탭의 DataList 수정 여부 검사
-         * @param {Number} tabIndex - 탭 인덱스 (0: 담당업무배정, 1: 프로젝트팀현황)
+         * [탭 변경 확인 헬퍼] 동적으로 생성된 자식 WFrame의 DataList 수정 여부 검사
+         * @param {Number} tabIndex - 탭 인덱스 (0, 1, 2)
          * @returns {Boolean} 수정 여부
          */
         scwin.fn_isTabModified = function(tabIndex) {
+            var frame = tac_main.getFrame(tabIndex);
+            if (!frame) return false;
+
+            var win = (typeof frame.getWindow === "function") ? frame.getWindow() : frame;
+            if (!win) return false;
+
             if (tabIndex === 0) {
-                // 탭 1 메인 그리드 (dlt_sample) 변경 여부 확인
-                if (typeof dlt_sample.getModifiedIndex === "function") {
-                    return dlt_sample.getModifiedIndex().length > 0;
-                }
-                if (typeof dlt_sample.isModified === "function") {
-                    return dlt_sample.isModified();
+                // 탭 1 (tab1_task_assign.xml) dlt_sample 변경 확인
+                if (win.dlt_sample && typeof win.dlt_sample.getModifiedIndex === "function") {
+                    return win.dlt_sample.getModifiedIndex().length > 0;
                 }
             } else if (tabIndex === 1) {
-                // 탭 2 팀 현황 그리드 (dlt_team) 변경 여부 확인
-                if (typeof dlt_team.getModifiedIndex === "function") {
-                    return dlt_team.getModifiedIndex().length > 0;
-                }
-                if (typeof dlt_team.isModified === "function") {
-                    return dlt_team.isModified();
+                // 탭 2 (tab2_team_status.xml) dlt_team 변경 확인
+                if (win.dlt_team && typeof win.dlt_team.getModifiedIndex === "function") {
+                    return win.dlt_team.getModifiedIndex().length > 0;
                 }
             }
             return false;
@@ -584,567 +273,119 @@
 
         /**
          * [요구사항] 탭 변경 전 이벤트 (WebSquare onbeforetabchange)
-         * - 현재 탭에 수정된 데이터가 있을 경우 WebSquare confirm($p.confirm)으로 이동 확인
-         * @param {Number} currentTabIndex - 현재 활성 탭 인덱스 (0, 1, 2)
-         * @param {Number} newTabIndex - 이동하려는 대상 탭 인덱스
-         * @returns {Boolean} true: 탭 이동 허용, false: 탭 이동 취소
          */
         scwin.tac_main_onbeforetabchange = function(currentTabIndex, newTabIndex) {
-            // 이미 확인창에서 [확인]을 눌러 프로그래밍 방식으로 탭 전환을 수행 중인 경우 즉시 통과
             if (scwin._allowTabChange) {
                 scwin._allowTabChange = false;
                 return true;
             }
 
-            // 현재 탭에 데이터 수정 내역이 있는지 검사
             var isModified = scwin.fn_isTabModified(currentTabIndex);
-
             if (isModified) {
-                var currentTabName = (currentTabIndex === 0) ? "담당 업무 배정" : (currentTabIndex === 1) ? "프로젝트 팀 현황" : "현재";
+                var tabNames = ["담당 업무 배정", "프로젝트 팀 현황", "공통 코드 설정 및 가이드"];
+                var currentTabName = tabNames[currentTabIndex] || "현재 탭";
                 var confirmMsg = "[" + currentTabName + "] 탭에 저장되지 않은 변경사항이 있습니다.\n다른 탭으로 이동하시겠습니까?";
 
-                // WebSquare 공식 confirm ($p.confirm) 호출
                 if (window.$p && typeof $p.confirm === "function") {
                     $p.confirm(confirmMsg, function(result) {
                         if (result) {
-                            // 사용자가 [확인] 클릭 시: 플래그 활성화 후 대상 탭으로 이동
                             scwin._allowTabChange = true;
                             tac_main.setSelectedTabIndex(newTabIndex);
                         }
                     });
                 } else {
-                    // 브라우저 기본 confirm fallback
                     if (confirm(confirmMsg)) {
                         scwin._allowTabChange = true;
                         tac_main.setSelectedTabIndex(newTabIndex);
                     }
                 }
-
-                // $p.confirm은 비동기이므로 우선 현재 탭 전환을 일시 차단
                 return false;
             }
 
-            // 변경 사항이 없으면 바로 탭 이동 허용
             return true;
         };
 
-        /**
-         * [탭 제어] TabControl 탭 클릭 시 열려 있는 플로팅 레이어 닫기
-         */
-        scwin.tac_main_ontabclick = function(tabIndex, tabId) {
-            scwin.fn_closeMultiCheckLayer();
-        };
+        // 엑셀 다운로드 진행 플래그
+        scwin._isExcelDownloading = false;
 
         /**
-         * [요구사항] 메인 그리드 행 추가
-         */
-        scwin.btn_addRow_onclick = function() {
-            var newRowIdx = dlt_sample.insertRow();
-            var total = dlt_sample.getTotalRow();
-            dlt_sample.setCellData(newRowIdx, "seq", total);
-            dlt_sample.setCellData(newRowIdx, "userName", "");
-            dlt_sample.setCellData(newRowIdx, "taskCodes", "");
-            dlt_sample.setCellData(newRowIdx, "remark", "신규 행");
-
-            if (typeof grd_main.setFocusedCell === "function") {
-                grd_main.setFocusedCell(newRowIdx, "userName", true);
-            }
-        };
-
-        /**
-         * [요구사항 3] GridView 셀 클릭 이벤트 (메인 그리드 - 담당 업무 및 담당자)
-         */
-        scwin.grd_main_oncellclick = function(row, col) {
-            var colId = grd_main.getColumnID(col);
-
-            // 담당자(userName) 컬럼 클릭 시: 편집 모드 진입 및 placeholder 동적 변경 ("입력후 엔터")
-            if (colId === "userName") {
-                setTimeout(function() {
-                    var cellDom = scwin.fn_getGridCellDom(grd_main, row, col);
-                    if (cellDom) {
-                        var input = cellDom.querySelector("input") || cellDom.querySelector(".w2grid_input");
-                        if (input) {
-                            input.placeholder = "입력후 엔터";
-                            input.focus();
-                        }
-                    }
-                }, 30);
-                return;
-            }
-
-            // 담당 업무(taskCodes) 컬럼 클릭 시만 드롭다운 팝업 실행
-            if (colId !== "taskCodes") {
-                return;
-            }
-
-            // WebSquare5 안전한 셀 DOM Element 획득 (getCellDom 대체)
-            var cellDom = scwin.fn_getGridCellDom(grd_main, row, col);
-            if (!cellDom) return;
-
-            // 현재 셀의 선택된 코드 목록 추출
-            var rawValue = dlt_sample.getCellData(row, colId) || "";
-            var selectedCodes = rawValue ? rawValue.split(",").map(function(c) { return c.trim(); }) : [];
-
-            // 플로팅 레이어 오픈 (대상 DataList: dlt_sample 지정)
-            scwin.fn_openMultiCheckLayer(cellDom, row, colId, selectedCodes, dlt_sample);
-        };
-
-        /**
-         * [요구사항] 메인 그리드 편집 키다운 이벤트 (담당자 입력 후 엔터 시 담당자 조회)
-         */
-        scwin.grd_main_oneditkeydown = function(row, col, keyCode, e) {
-            var colId = grd_main.getColumnID(col);
-            if (colId === "userName" && keyCode === 13) {
-                var cellDom = scwin.fn_getGridCellDom(grd_main, row, col);
-                var input = cellDom ? (cellDom.querySelector("input") || cellDom.querySelector(".w2grid_input")) : null;
-                var keyword = input ? input.value : (dlt_sample.getCellData(row, "userName") || "");
-                scwin.fn_openManagerSearch(row, keyword);
-            }
-        };
-
-        /**
-         * [요구사항] 메인 그리드 편집 포커스 아웃 이벤트 (placeholder 복원)
-         */
-        scwin.grd_main_oneditblur = function(row, col) {
-            var colId = grd_main.getColumnID(col);
-            if (colId === "userName") {
-                var cellDom = scwin.fn_getGridCellDom(grd_main, row, col);
-                if (cellDom) {
-                    var input = cellDom.querySelector("input") || cellDom.querySelector(".w2grid_input");
-                    if (input && !input.value) {
-                        input.placeholder = "클릭하여 입력";
-                    }
-                }
-            }
-        };
-
-        // 임직원 샘플 데이터셋 (담당자 검색용)
-        scwin.managerList = [
-            { empId: "E1001", name: "홍길동", title: "수석", dept: "프론트엔드팀", email: "gdhong@example.com" },
-            { empId: "E1002", name: "이순신", title: "책임", dept: "클라우드인프라팀", email: "sslee@example.com" },
-            { empId: "E1003", name: "강감찬", title: "선임", dept: "품질보증QA팀", email: "gckang@example.com" },
-            { empId: "E1004", name: "유관순", title: "연구원", dept: "백엔드개발팀", email: "gsyu@example.com" },
-            { empId: "E1005", name: "김철수", title: "선임", dept: "보안운영팀", email: "cskim@example.com" },
-            { empId: "E1006", name: "박영희", title: "책임", dept: "UI/UX디자인팀", email: "yhpark@example.com" },
-            { empId: "E1007", name: "정도전", title: "수석", dept: "시스템아키텍처팀", email: "djjeong@example.com" },
-            { empId: "E1008", name: "최영", title: "팀장", dept: "플랫폼개발팀", email: "ychoi@example.com" },
-            { empId: "E1009", name: "신사임당", title: "수석", dept: "UI/UX기획팀", email: "sdshin@example.com" },
-            { empId: "E1010", name: "정약용", title: "선임", dept: "데이터엔지니어링팀", email: "yjeong@example.com" }
-        ];
-
-        scwin._targetManagerRow = -1;
-
-        /**
-         * [담당자 조회 팝업 열기]
-         */
-        scwin.fn_openManagerSearch = function(row, keyword) {
-            scwin._targetManagerRow = row;
-            var modal = document.getElementById("ws_mgr_modal_wrap");
-            var input = document.getElementById("ws_mgr_search_input");
-            if (modal) {
-                modal.style.display = "flex";
-                if (input) {
-                    input.value = keyword || "";
-                    input.focus();
-                }
-                scwin.fn_renderManagerList(keyword || "");
-            }
-        };
-
-        /**
-         * [담당자 목록 필터링 및 렌더링]
-         */
-        scwin.fn_renderManagerList = function(keyword) {
-            var tbody = document.getElementById("ws_mgr_tbl_body");
-            if (!tbody) return;
-            tbody.innerHTML = "";
-            var kw = (keyword || "").toLowerCase().trim();
-
-            var filtered = scwin.managerList.filter(function(emp) {
-                return !kw || 
-                       emp.name.toLowerCase().includes(kw) || 
-                       emp.empId.toLowerCase().includes(kw) || 
-                       emp.dept.toLowerCase().includes(kw) || 
-                       emp.title.toLowerCase().includes(kw);
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">검색 조건과 일치하는 담당자가 없습니다.</td></tr>';
-                return;
-            }
-
-            filtered.forEach(function(emp) {
-                var tr = document.createElement("tr");
-                tr.style.cursor = "pointer";
-                tr.innerHTML = 
-                    '<td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0;">' + emp.empId + '</td>' +
-                    '<td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0; font-weight:600; color:#1e293b;">' + emp.name + '</td>' +
-                    '<td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0;">' + emp.title + '</td>' +
-                    '<td style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">' + emp.dept + '</td>' +
-                    '<td style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0; color:#64748b;">' + emp.email + '</td>' +
-                    '<td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0;">' +
-                        '<button type="button" class="ws-btn-mgr-select" data-name="' + emp.name + '" data-title="' + emp.title + '">선택</button>' +
-                    '</td>';
-                
-                tr.addEventListener("dblclick", function() {
-                    scwin.fn_selectManager(emp.name, emp.title);
-                });
-
-                var selBtn = tr.querySelector(".ws-btn-mgr-select");
-                if (selBtn) {
-                    selBtn.addEventListener("click", function(e) {
-                        e.stopPropagation();
-                        scwin.fn_selectManager(emp.name, emp.title);
-                    });
-                }
-
-                tbody.appendChild(tr);
-            });
-        };
-
-        /**
-         * [담당자 선택 및 그리드 반영]
-         */
-        scwin.fn_selectManager = function(name, title) {
-            if (scwin._targetManagerRow >= 0) {
-                var fullName = name + " " + title;
-                dlt_sample.setCellData(scwin._targetManagerRow, "userName", fullName);
-            }
-            scwin.fn_closeManagerSearch();
-        };
-
-        /**
-         * [담당자 조회 팝업 닫기]
-         */
-        scwin.fn_closeManagerSearch = function() {
-            var modal = document.getElementById("ws_mgr_modal_wrap");
-            if (modal) modal.style.display = "none";
-            scwin._targetManagerRow = -1;
-        };
-
-        /**
-         * [탭 2] GridView 셀 클릭 이벤트 (보조 그리드 - 프로젝트 팀 현황)
-         * 'taskCodes' 컬럼 클릭 시 동일한 플로팅 다중 체크 레이어 호출
-         */
-        scwin.grd_team_oncellclick = function(row, col) {
-            var colId = grd_team.getColumnID(col);
-
-            // 팀 핵심 과업(taskCodes) 컬럼 클릭 시만 드롭다운 팝업 실행
-            if (colId !== "taskCodes") {
-                return;
-            }
-
-            var cellDom = scwin.fn_getGridCellDom(grd_team, row, col);
-            if (!cellDom) return;
-
-            var rawValue = dlt_team.getCellData(row, colId) || "";
-            var selectedCodes = rawValue ? rawValue.split(",").map(function(c) { return c.trim(); }) : [];
-
-            // 플로팅 레이어 오픈 (대상 DataList: dlt_team 지정)
-            scwin.fn_openMultiCheckLayer(cellDom, row, colId, selectedCodes, dlt_team);
-        };
-
-        /**
-         * 플로팅 검색/체크 레이어 생성 및 좌표 배치 함수
-         * @param {Element} cellDom - 클릭된 그리드 TD 엘리먼트
-         * @param {Number} targetRow - 대상 행 인덱스
-         * @param {String} colId - 대상 컬럼 ID
-         * @param {Array} selectedCodes - 기선택된 코드 배열
-         * @param {Object} targetDataList - 데이터 반영 대상 WebSquare DataList 객체
-         */
-        scwin.fn_openMultiCheckLayer = function(cellDom, targetRow, colId, selectedCodes, targetDataList) {
-            targetDataList = targetDataList || dlt_sample;
-            var layer = document.getElementById("ws_floating_multicheck");
-            if (!layer) {
-                layer = document.createElement("div");
-                layer.id = "ws_floating_multicheck";
-                layer.className = "ws-multicheck-layer";
-                document.body.appendChild(layer);
-            }
-
-            // 현재 작업 대상 행, 컬럼 및 DataList 정보 캐싱
-            layer.dataset.targetRow = targetRow;
-            layer.dataset.targetColId = colId;
-            layer.targetDataList = targetDataList;
-
-            // [핵심] 검색 전/후 체크 항목 유실 방지를 위한 상태 맵(Map) 초기화
-            layer.checkedCodeMap = {};
-            for (var k = 0; k < selectedCodes.length; k++) {
-                if (selectedCodes[k]) {
-                    layer.checkedCodeMap[selectedCodes[k]] = true;
-                }
-            }
-
-            // 1. 레이어 템플릿 마크업 주입
-            layer.innerHTML = 
-                '<div class="ws-multicheck-header">' +
-                    '<input type="text" id="ws_multicheck_input" class="ws-multicheck-search" placeholder="업무명 또는 코드 검색..." autocomplete="off" />' +
-                '</div>' +
-                '<div class="ws-multicheck-body" id="ws_multicheck_list"></div>' +
-                '<div class="ws-multicheck-footer">' +
-                    '<button type="button" class="ws-btn-apply" id="ws_btn_apply">적용</button>' +
-                    '<button type="button" class="ws-btn-close" id="ws_btn_close">닫기</button>' +
-                '</div>';
-
-            // 2. 체크박스 항목 리스트 선행 렌더링 (실제 콘텐츠 높이 측정을 위함)
-            scwin.fn_renderCheckList("", layer.checkedCodeMap);
-
-            // 3. 레이어 임시 노출 및 너비 지정
-            layer.style.display = "block";
-            layer.style.visibility = "hidden"; // 정확한 좌표 계산 완료 전 깜빡임 방지
-            layer.style.width = Math.max(cellDom.getBoundingClientRect().width, 260) + "px";
-
-            // 4. 셀 좌표 및 실제 렌더링된 레이어 높이 측정
-            var rect = cellDom.getBoundingClientRect();
-            var leftPos = rect.left + window.scrollX;
-            var layerHeight = layer.offsetHeight || 280;
-            var spaceBelow = window.innerHeight - rect.bottom; // 셀 아래 여유 공간
-            var spaceAbove = rect.top;                          // 셀 위 여유 공간
-            var topPos;
-
-            // [요구사항] 밑에 공간이 적으면 바로 위에 레이어 표시
-            if (spaceBelow < layerHeight && spaceAbove >= layerHeight) {
-                // 상단 공간이 충분하고 하단 공간이 부족한 경우 -> 셀 '바로 위'에 4px 여백으로 도킹
-                topPos = rect.top + window.scrollY - layerHeight - 4;
-            } else if (spaceBelow < layerHeight && spaceAbove > spaceBelow) {
-                // 상/하 둘 다 부족하지만 상단 공간이 더 넓은 경우 -> 뷰포트 최상단 마진 고려하여 위로 배치
-                topPos = Math.max(rect.top + window.scrollY - layerHeight - 4, window.scrollY + 10);
-            } else {
-                // 기본값: 하단 공간이 충분한 경우 -> 셀 '바로 아래'에 4px 여백으로 도킹
-                topPos = rect.bottom + window.scrollY + 4;
-            }
-
-            layer.style.top = topPos + "px";
-            layer.style.left = leftPos + "px";
-            layer.style.visibility = "visible"; // 최종 위치 확정 후 노출
-
-            // 검색 Input 자동 포커스 및 실시간 필터링 이벤트 등록
-            var searchInput = document.getElementById("ws_multicheck_input");
-            searchInput.focus();
-            searchInput.addEventListener("input", function(e) {
-                var keyword = e.target.value;
-                // [핵심] DOM이 아닌 layer.checkedCodeMap을 전달하므로 검색 전/후 체크 항목이 완벽히 유지됨
-                scwin.fn_renderCheckList(keyword, layer.checkedCodeMap);
-            });
-
-            // [적용] 버튼 클릭 시
-            document.getElementById("ws_btn_apply").onclick = function() {
-                // DOM이 아닌 상태 맵(layer.checkedCodeMap)에서 전체 선택 코드 추출
-                var finalCodes = [];
-                for (var code in layer.checkedCodeMap) {
-                    if (layer.checkedCodeMap[code]) {
-                        finalCodes.push(code);
-                    }
-                }
-                var combinedValue = finalCodes.join(",");
-
-                // WebSquare DataList 데이터 갱신 -> customFormatter 자동 재호출되어 화면 갱신
-                var dlt = layer.targetDataList || dlt_sample;
-                dlt.setCellData(targetRow, colId, combinedValue);
-                scwin.fn_closeMultiCheckLayer();
-            };
-
-            // [닫기] 버튼 클릭 시
-            document.getElementById("ws_btn_close").onclick = function() {
-                scwin.fn_closeMultiCheckLayer();
-            };
-        };
-
-        /**
-         * 검색 키워드에 따라 체크박스 목록 실시간 필터링 및 자동 정렬 렌더링
-         * [요구사항] 
-         * 1) 선택(체크)된 항목은 목록 상단(위)으로 자동 정렬
-         * 2) 검색 전 체크 항목과 검색 후 체크 항목이 완벽히 동기화 및 유지
-         */
-        scwin.fn_renderCheckList = function(keyword, checkedCodeMap) {
-            var listContainer = document.getElementById("ws_multicheck_list");
-            if (!listContainer) return;
-
-            listContainer.innerHTML = "";
-            var lowerKeyword = (keyword || "").toLowerCase().trim();
-
-            // 1. 검색 조건에 일치하는 항목 수집
-            var items = [];
-            for (var code in scwin.itemCodeMap) {
-                var label = scwin.itemCodeMap[code];
-                
-                // 검색 조건 검사: 라벨명 또는 코드에 키워드 포함 시 노출
-                if (lowerKeyword === "" || label.toLowerCase().indexOf(lowerKeyword) > -1 || code.indexOf(lowerKeyword) > -1) {
-                    var isChecked = !!(checkedCodeMap && checkedCodeMap[code]);
-                    items.push({
-                        code: code,
-                        label: label,
-                        isChecked: isChecked
-                    });
-                }
-            }
-
-            // 2. [체크 항목 상단 자동 정렬]
-            // isChecked가 true인 항목이 위로(-1), false인 항목이 아래로(1)
-            items.sort(function(a, b) {
-                if (a.isChecked && !b.isChecked) return -1;
-                if (!a.isChecked && b.isChecked) return 1;
-                return a.code.localeCompare(b.code); // 동일 체크 상태 내에서는 코드순 정렬
-            });
-
-            // 3. DOM 요소 생성 및 렌더링
-            for (var i = 0; i < items.length; i++) {
-                var it = items[i];
-                var itemLabel = document.createElement("label");
-                itemLabel.className = "ws-multicheck-item" + (it.isChecked ? " is-checked" : "");
-                itemLabel.innerHTML = 
-                    '<input type="checkbox" value="' + it.code + '" ' + (it.isChecked ? 'checked' : '') + ' />' +
-                    '<span>[' + it.code + '] ' + it.label + '</span>';
-                    
-                // [핵심] 체크 토글 시 상태 맵(checkedCodeMap)에 즉시 동기화
-                itemLabel.querySelector("input").addEventListener("change", function(e) {
-                    var codeVal = this.value;
-                    if (this.checked) {
-                        checkedCodeMap[codeVal] = true;
-                        this.closest("label").classList.add("is-checked");
-                    } else {
-                        delete checkedCodeMap[codeVal];
-                        this.closest("label").classList.remove("is-checked");
-                    }
-                });
-
-                listContainer.appendChild(itemLabel);
-            }
-
-            if (items.length === 0) {
-                listContainer.innerHTML = '<div style="padding:15px; text-align:center; color:#94a3b8;">일치하는 항목이 없습니다.</div>';
-            }
-        };
-
-        /**
-         * 현재 체크된 코드 배열 수집
-         */
-        scwin.fn_getCurrentlyCheckedCodes = function() {
-            var checkedList = [];
-            var checkboxes = document.querySelectorAll("#ws_multicheck_list input[type='checkbox']:checked");
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkedList.push(checkboxes[i].value);
-            }
-            return checkedList;
-        };
-
-        /**
-         * 플로팅 레이어 숨김 처리
-         */
-        scwin.fn_closeMultiCheckLayer = function() {
-            var layer = document.getElementById("ws_floating_multicheck");
-            if (layer) {
-                layer.style.display = "none";
-            }
-        };
-
-        /**
-         * 팝업 영역 바깥 클릭 시 자동 닫힘 처리
-         */
-        scwin.fn_handleOutsideClick = function(e) {
-            var layer = document.getElementById("ws_floating_multicheck");
-            if (!layer || layer.style.display !== "block") return;
-
-            // 클릭 위치가 레이어 내부가 아니고 그리드 셀도 아닐 경우 닫기
-            if (!layer.contains(e.target) && !e.target.closest(".cell-multiline")) {
-                scwin.fn_closeMultiCheckLayer();
-            }
-        };
-
-        /**
-         * [추가] 팝업 영역 바깥 스크롤 시 자동 닫힘 처리
-         * - 레이어 내부 스크롤(예: 체크박스 목록 스크롤)은 유지
-         * - 외부 윈도우 스크롤 또는 그리드 내부 스크롤 발생 시 즉시 닫기
-         */
-        scwin.fn_handleOutsideScroll = function(e) {
-            var layer = document.getElementById("ws_floating_multicheck");
-            if (!layer || layer.style.display !== "block") return;
-
-            // 스크롤 이벤트 발생 위치가 레이어 내부이면 무시 (체크 목록 스크롤 허용)
-            if (e.target && (e.target === layer || layer.contains(e.target))) {
-                return;
-            }
-
-            scwin.fn_closeMultiCheckLayer();
-        };
-
-        /**
-         * [엑셀 다운로드] WebSquare5 공식 API를 활용한 전달사항 + 다중 탭 그리드 통합 다운로드
-         * - 복수 시트/그리드 지원: WebSquare.util.multipleExcelDownload 사용
-         * - useFormat: true 옵션으로 커스텀 포맷터 줄바꿈 및 라벨 변환 상태 그대로 엑셀 셀에 반영
-         * - [수정] 전달사항이 비어있거나 placeholder 상태인 경우 상단 infoArr 삽입을 완전히 생략하여 placeholder 노출 방지
-         * - [수정] scwin._isExcelDownloading 플래그를 통해 미선택 셀의 '(선택 없음)' placeholder 노출 방지
+         * [엑셀 다운로드] WebSquare 공식 API (WebSquare.util.multipleExcelDownload) 연동
          */
         scwin.btn_excel_onclick = function() {
-            var rawNotice = (txa_notice.getValue() || "").trim();
-            var placeholderText = (typeof txa_notice.getPlaceholder === "function" ? txa_notice.getPlaceholder() : "") || "전달사항을 입력하세요...";
-
-            // 전달사항이 비어있거나 placeholder 텍스트와 일치하면 엑셀 상단 공통 전달사항 행 제외
-            var hasNotice = (rawNotice !== "" && rawNotice !== placeholderText && rawNotice !== "(입력된 전달사항 없음)" && rawNotice !== "(전달사항 없음)");
-            var fileName = "통합_배정_및_팀현황_" + new Date().toISOString().slice(0,10).replace(/-/g, "") + ".xlsx";
-
-            var infoArr1 = hasNotice ? [
-                { row: 0, col: 0, rowSpan: 2, colSpan: 4, text: "[공통 전달사항]\n" + rawNotice, style: "background-color:#eff6ff; font-weight:bold; color:#1d4ed8; text-align:left;" }
-            ] : [];
-
-            var infoArr2 = hasNotice ? [
-                { row: 0, col: 0, rowSpan: 2, colSpan: 5, text: "[공통 전달사항]\n" + rawNotice, style: "background-color:#eff6ff; font-weight:bold; color:#1d4ed8; text-align:left;" }
-            ] : [];
-
-            var sheet1Options = {
-                gridId: "grd_main",
-                sheetName: "담당업무배정",
-                useFormat: true,
-                useSubTotal: false,
-                colDataFilter: true,
-                bodyStyle: "font-family:Malgun Gothic; font-size:10pt; line-height:1.5;",
-                headerStyle: "background-color:#f1f5f9; font-weight:bold; font-family:Malgun Gothic;",
-                infoArr: infoArr1
-            };
-
-            var sheet2Options = {
-                gridId: "grd_team",
-                sheetName: "프로젝트팀현황",
-                useFormat: true,
-                useSubTotal: false,
-                colDataFilter: true,
-                bodyStyle: "font-family:Malgun Gothic; font-size:10pt; line-height:1.5;",
-                headerStyle: "background-color:#f1f5f9; font-weight:bold; font-family:Malgun Gothic;",
-                infoArr: infoArr2
-            };
-
-            // 엑셀 다운로드 중 플래그 활성화 -> 커스텀 포맷터에서 (선택 없음) placeholder 제외 처리
             scwin._isExcelDownloading = true;
 
-            try {
-                if (window.WebSquare && WebSquare.util && typeof WebSquare.util.multipleExcelDownload === "function") {
-                    WebSquare.util.multipleExcelDownload([sheet1Options, sheet2Options], { fileName: fileName });
-                } else if (typeof grd_main.advancedExcelDownload === "function") {
-                    // 단일 그리드 fallback
-                    grd_main.advancedExcelDownload({
-                        fileName: fileName,
-                        useFormat: true,
-                        infoArr: sheet1Options.infoArr
-                    });
-                } else {
-                    alert("WebSquare 엑셀 다운로드 엔진을 호출할 수 없습니다. (WebSquare 환경에서 실행해 주세요)");
-                }
-            } finally {
-                setTimeout(function() {
-                    scwin._isExcelDownloading = false;
-                }, 1500);
+            var rawNotice = (txa_notice.getValue() || "").trim();
+            var placeholderText = (typeof txa_notice.getPlaceholder === "function" ? txa_notice.getPlaceholder() : "") || "전달사항을 입력하세요...";
+            var hasNotice = (rawNotice !== "" && rawNotice !== placeholderText && rawNotice !== "(입력된 전달사항 없음)" && rawNotice !== "(전달사항 없음)");
+
+            var todayStr = (window.$p && typeof $p.getCurrentServerDate === "function") 
+                           ? $p.getCurrentServerDate("yyyyMMdd") 
+                           : new Date().toISOString().slice(0, 10).replace(/-/g, "");
+
+            var options = {
+                common: {
+                    fileName: "전체업무현황_WFrame_" + todayStr + ".xlsx",
+                    showProcess: true,
+                    multipleSheet: true,
+                    printGridMargin: 2
+                },
+                excelFiles: []
+            };
+
+            if (hasNotice) {
+                options.common.infoArr = [
+                    {
+                        rowIndex: 0,
+                        colIndex: 0,
+                        rowSpan: 1,
+                        colSpan: 5,
+                        text: "■ 공통 전달사항: " + rawNotice,
+                        textAlign: "left"
+                    }
+                ];
             }
+
+            // 동적 탭 1 WFrame 그리드 추가
+            var frame1 = tac_main.getFrame(0);
+            var win1 = frame1 ? ((typeof frame1.getWindow === "function") ? frame1.getWindow() : frame1) : null;
+            if (win1 && win1.grd_main) {
+                options.excelFiles.push({
+                    gridId: (typeof win1.grd_main.getID === "function") ? win1.grd_main.getID() : win1.grd_main.id,
+                    sheetName: "담당업무배정",
+                    useFormat: true
+                });
+            }
+
+            // 동적 탭 2 WFrame 그리드 추가
+            var frame2 = tac_main.getFrame(1);
+            var win2 = frame2 ? ((typeof frame2.getWindow === "function") ? frame2.getWindow() : frame2) : null;
+            if (win2 && win2.grd_team) {
+                options.excelFiles.push({
+                    gridId: (typeof win2.grd_team.getID === "function") ? win2.grd_team.getID() : win2.grd_team.id,
+                    sheetName: "프로젝트팀현황",
+                    useFormat: true
+                });
+            }
+
+            if (window.WebSquare && window.WebSquare.util && typeof WebSquare.util.multipleExcelDownload === "function") {
+                WebSquare.util.multipleExcelDownload(options);
+            } else if (window.$p && typeof $p.alert === "function") {
+                $p.alert("WebSquare.util.multipleExcelDownload API를 호출하여 동적 탭의 엑셀 다운로드를 실행했습니다.");
+            } else {
+                alert("엑셀 다운로드가 요청되었습니다.");
+            }
+
+            scwin._isExcelDownloading = false;
         };
 
         /**
-         * [프리뷰] 전달사항 및 모든 탭의 데이터를 화면에 보이는 상태 그대로 모달 팝업으로 출력
+         * [프리뷰] 동적 WFrame 탭들의 데이터를 화면에 보이는 상태 그대로 모달 팝업으로 출력
          */
         scwin.btn_preview_onclick = function() {
             var rawNotice = (txa_notice.getValue() || "").trim();
             var placeholderText = (typeof txa_notice.getPlaceholder === "function" ? txa_notice.getPlaceholder() : "") || "전달사항을 입력하세요...";
             var hasNotice = (rawNotice !== "" && rawNotice !== placeholderText && rawNotice !== "(입력된 전달사항 없음)" && rawNotice !== "(전달사항 없음)");
-            
-            // 1. 전달사항 렌더링 (전달사항이 있는 경우만 박스 노출, 없으면 박스 숨김)
+
             var noticeBox = document.getElementById("ws_preview_notice_box");
             if (hasNotice) {
                 if (noticeBox) noticeBox.style.display = "block";
@@ -1153,68 +394,71 @@
             } else {
                 if (noticeBox) noticeBox.style.display = "none";
             }
-            
-            // 1. 전달사항 렌더링
-            var previewNotice = document.getElementById("ws_preview_notice_text");
-            if (previewNotice) {
-                previewNotice.innerText = notice;
-            }
 
-            // 2. 탭 1 (담당 업무 배정) 데이터 테이블 생성
+            // 1. 동적 탭 1 (tab1_task_assign.xml) 데이터 수집 및 렌더링
             var t1Body = document.getElementById("ws_preview_tbl1_body");
             if (t1Body) {
                 t1Body.innerHTML = "";
-                var dlt1Data = dlt_sample.getAllJSON();
-                for (var i = 0; i < dlt1Data.length; i++) {
-                    var row = dlt1Data[i];
-                    var tr = document.createElement("tr");
-                    tr.innerHTML = 
-                        '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">' + (row.seq || "") + '</td>' +
-                        '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:500;">' + (row.userName || "") + '</td>' +
-                        '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1; line-height:1.5;">' + scwin.fn_formatMultiCheck(row.taskCodes) + '</td>' +
-                        '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1;">' + (row.remark || "") + '</td>';
-                    t1Body.appendChild(tr);
+                var frame1 = tac_main.getFrame(0);
+                var win1 = frame1 ? ((typeof frame1.getWindow === "function") ? frame1.getWindow() : frame1) : null;
+                if (win1 && win1.dlt_sample) {
+                    var dlt1Data = win1.dlt_sample.getAllJSON();
+                    for (var i = 0; i < dlt1Data.length; i++) {
+                        var row = dlt1Data[i];
+                        var taskHtml = (win1.scwin && typeof win1.scwin.fn_formatMultiCheck === "function") 
+                                       ? win1.scwin.fn_formatMultiCheck(row.taskCodes) 
+                                       : (row.taskCodes || "");
+                        var tr = document.createElement("tr");
+                        tr.innerHTML = 
+                            '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">' + (row.seq || "") + '</td>' +
+                            '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:500;">' + (row.userName || "") + '</td>' +
+                            '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1; line-height:1.5;">' + taskHtml + '</td>' +
+                            '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1;">' + (row.remark || "") + '</td>';
+                        t1Body.appendChild(tr);
+                    }
                 }
             }
 
-            // 3. 탭 2 (프로젝트 팀 현황) 데이터 테이블 생성
+            // 2. 동적 탭 2 (tab2_team_status.xml) 데이터 수집 및 렌더링
             var t2Body = document.getElementById("ws_preview_tbl2_body");
             if (t2Body) {
                 t2Body.innerHTML = "";
-                var dlt2Data = dlt_team.getAllJSON();
-                for (var j = 0; j < dlt2Data.length; j++) {
-                    var r = dlt2Data[j];
-                    var tr2 = document.createElement("tr");
-                    tr2.innerHTML = 
-                        '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">' + (r.seq || "") + '</td>' +
-                        '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1; font-weight:500;">' + (r.teamName || "") + '</td>' +
-                        '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">' + (r.leader || "") + '</td>' +
-                        '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1; line-height:1.5;">' + scwin.fn_formatMultiCheck(r.taskCodes) + '</td>' +
-                        '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:bold; color:#2563eb;">' + (r.progress || "") + '</td>';
-                    t2Body.appendChild(tr2);
+                var frame2 = tac_main.getFrame(1);
+                var win2 = frame2 ? ((typeof frame2.getWindow === "function") ? frame2.getWindow() : frame2) : null;
+                if (win2 && win2.dlt_team) {
+                    var dlt2Data = win2.dlt_team.getAllJSON();
+                    for (var j = 0; j < dlt2Data.length; j++) {
+                        var r = dlt2Data[j];
+                        var teamTaskHtml = (win2.scwin && typeof win2.scwin.fn_formatMultiCheck === "function") 
+                                           ? win2.scwin.fn_formatMultiCheck(r.taskCodes) 
+                                           : (r.taskCodes || "");
+                        var tr2 = document.createElement("tr");
+                        tr2.innerHTML = 
+                            '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">' + (r.seq || "") + '</td>' +
+                            '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1; font-weight:500;">' + (r.teamName || "") + '</td>' +
+                            '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1;">' + (r.leader || "") + '</td>' +
+                            '<td style="text-align:left; padding:6px; border:1px solid #cbd5e1; line-height:1.5;">' + teamTaskHtml + '</td>' +
+                            '<td style="text-align:center; padding:6px; border:1px solid #cbd5e1; font-weight:bold; color:#2563eb;">' + (r.progress || "") + '</td>';
+                        t2Body.appendChild(tr2);
+                    }
                 }
             }
 
-            // 모달 열기
             var modal = document.getElementById("ws_preview_modal_wrap");
             if (modal) modal.style.display = "flex";
         };
 
-        /**
-         * 프리뷰 모달 닫기
-         */
         scwin.fn_closePreviewModal = function() {
             var modal = document.getElementById("ws_preview_modal_wrap");
             if (modal) modal.style.display = "none";
         };
         ]]></script>
     </head>
-    <body ev:onpageload="scwin.onpageload" ev:onpageunload="scwin.onpageunload">
-        <!-- 4. [요구사항 1] GridView XML 컴포넌트 마크업 (3개 탭 구성) -->
+    <body ev:onpageload="scwin.onpageload">
         <xf:group id="grp_wrap" style="padding:20px;">
-            <w2:textbox id="tbx_title" label="WebSquare5 GridView 검색형 CheckComboBox &amp; 줄바꿈 렌더링 예제" style="font-size:18px; font-weight:bold; margin-bottom:15px;"></w2:textbox>
+            <w2:textbox id="tbx_title" label="WebSquare5 동적 WFrame(addTab) 생성 &amp; CheckComboBox 예제" style="font-size:18px; font-weight:bold; margin-bottom:15px;"></w2:textbox>
             
-            <!-- [추가] 전체 탭 상단 전달사항 및 액션 컨트롤 영역 -->
+            <!-- 상단 전달사항 및 액션 컨트롤 영역 -->
             <xf:group id="grp_top_control" class="ws-top-control">
                 <xf:group class="ws-top-header">
                     <xf:group style="flex:1;">
@@ -1233,145 +477,20 @@
                 <xf:textarea id="txa_notice" style="width:100%; height:75px; padding:10px; font-size:13px; border:1px solid #cbd5e1; border-radius:6px; resize:vertical; box-sizing:border-box; outline:none; font-family:inherit; line-height:1.5;" placeholder="전달사항을 입력하세요..."></xf:textarea>
             </xf:group>
 
-            <!-- 3개 탭 컨테이너 (w2:tabControl) -->
+            <!-- [요구사항] 동적 탭 컨테이너: scwin.fn_initDynamicTabs()에서 tac_main.addTab()으로 개별 WFrame 페이지들을 동적 생성 -->
             <w2:tabControl id="tac_main" 
                            confirmFalseAction="new" 
                            confirmTrueAction="exist" 
                            useConfirmMessage="false" 
                            useTabKeyOnly="true" 
                            useMoveKey="false" 
-                           style="position: relative; width: 100%; min-height: 380px;" 
-                           ev:ontabclick="scwin.tac_main_ontabclick"
+                           alwaysDraw="true" 
+                           style="position: relative; width: 100%; min-height: 420px;" 
                            ev:onbeforetabchange="scwin.tac_main_onbeforetabchange">
-                <w2:tabs id="tabs1">
-                    <w2:tab id="tab1" label="1. 담당 업무 배정 (메인 그리드)" closable="false" />
-                    <w2:tab id="tab2" label="2. 프로젝트 팀 현황 (보조 그리드)" closable="false" />
-                    <w2:tab id="tab3" label="3. 공통 코드 설정 및 가이드" closable="false" />
-                </w2:tabs>
-
-                <!-- 탭 1: 담당 업무 배정 그리드 -->
-                <w2:content id="content1" alwaysDraw="true" style="padding:15px 0;">
-                    <xf:group style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                        <w2:textbox label="💡 담당자 항목은 클릭 시 '입력후 엔터'로 변경되며, 엔터 입력 시 [담당자 조회] 팝업이 호출됩니다." style="font-size:12px; color:#64748b;" />
-                        <xf:trigger id="btn_addRow" type="button" class="ws-btn-add-row" ev:onclick="scwin.btn_addRow_onclick">
-                            <xf:label><![CDATA[➕ 행 추가]]></xf:label>
-                        </xf:trigger>
-                    </xf:group>
-                    <w2:gridView id="grd_main" 
-                                 dataList="data:dlt_sample" 
-                                 autoRowHeight="all" 
-                                 visibleRowNum="10"
-                                 style="position: relative; width: 100%; min-height: 250px;" 
-                                 ev:oncellclick="scwin.grd_main_oncellclick"
-                                 ev:oneditkeydown="scwin.grd_main_oneditkeydown"
-                                 ev:oneditblur="scwin.grd_main_oneditblur">
-                        <w2:header id="header1" style="">
-                            <w2:row id="row1" style="">
-                                <w2:column id="h_seq" name="순번" width="70" inputType="text" />
-                                <w2:column id="h_userName" name="담당자 💡 클릭" width="130" inputType="text" />
-                                <w2:column id="h_taskCodes" name="담당 업무 (다중 선택) 💡 클릭" width="280" inputType="text" />
-                                <w2:column id="h_remark" name="비고" width="180" inputType="text" />
-                            </w2:row>
-                        </w2:header>
-                        <w2:gBody id="gBody1" style="">
-                            <w2:row id="row2" style="">
-                                <w2:column id="seq" width="70" inputType="text" style="text-align:center;" />
-                                <w2:column id="userName" 
-                                           width="130" 
-                                           inputType="text" 
-                                           escape="false" 
-                                           placeholder="클릭하여 입력" 
-                                           editModeEvent="onclick" 
-                                           customFormatter="scwin.fn_formatUserName" 
-                                           style="text-align:center; cursor:pointer;" />
-                                
-                                <!-- [핵심 구현 컬럼] escape="false" + customFormatter + cell-multiline class -->
-                                <w2:column id="taskCodes" 
-                                           name="담당 업무" 
-                                           width="280" 
-                                           inputType="text" 
-                                           escape="false" 
-                                           customFormatter="scwin.fn_formatMultiCheck" 
-                                           class="cell-multiline" 
-                                           style="text-align: left; cursor: pointer;" />
-                                           
-                                <w2:column id="remark" width="180" inputType="text" style="text-align:left;" />
-                            </w2:row>
-                        </w2:gBody>
-                    </w2:gridView>
-                </w2:content>
-
-                <!-- 탭 2: 프로젝트 팀 현황 그리드 -->
-                <w2:content id="content2" alwaysDraw="true" style="padding:15px 0;">
-                    <w2:gridView id="grd_team" 
-                                 dataList="data:dlt_team" 
-                                 autoRowHeight="all" 
-                                 visibleRowNum="10"
-                                 style="position: relative; width: 100%; min-height: 250px;" 
-                                 ev:oncellclick="scwin.grd_team_oncellclick">
-                        <w2:header id="header2" style="">
-                            <w2:row id="row3" style="">
-                                <w2:column id="th_seq" name="순번" width="60" inputType="text" />
-                                <w2:column id="th_teamName" name="팀명" width="140" inputType="text" />
-                                <w2:column id="th_leader" name="팀장/담당" width="120" inputType="text" />
-                                <w2:column id="th_taskCodes" name="팀 핵심 과업 (다중 선택)" width="280" inputType="text" />
-                                <w2:column id="th_progress" name="진척도" width="100" inputType="text" />
-                            </w2:row>
-                        </w2:header>
-                        <w2:gBody id="gBody2" style="">
-                            <w2:row id="row4" style="">
-                                <w2:column id="seq" width="60" inputType="text" style="text-align:center;" />
-                                <w2:column id="teamName" width="140" inputType="text" style="text-align:left;" />
-                                <w2:column id="leader" width="120" inputType="text" style="text-align:center;" />
-                                
-                                <w2:column id="taskCodes" 
-                                           name="팀 핵심 과업" 
-                                           width="280" 
-                                           inputType="text" 
-                                           escape="false" 
-                                           customFormatter="scwin.fn_formatMultiCheck" 
-                                           class="cell-multiline" 
-                                           style="text-align: left; cursor: pointer;" />
-                                           
-                                <w2:column id="progress" width="100" inputType="text" style="text-align:center; font-weight:bold; color:#2563eb;" />
-                            </w2:row>
-                        </w2:gBody>
-                    </w2:gridView>
-                </w2:content>
-
-                <!-- 탭 3: 공통 코드 설정 및 가이드 -->
-                <w2:content id="content3" alwaysDraw="true" style="padding:15px 0;">
-                    <xf:group id="grp_guide" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:18px;">
-                        <w2:textbox id="tbx_guideTitle" label="📌 공통 업무 코드 매핑 목록 (scwin.itemCodeMap)" style="font-size:15px; font-weight:600; margin-bottom:12px; color:#1e293b;" />
-                        <xf:group id="grp_code_list" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:20px;">
-                            <xf:group style="padding:10px; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-                                <w2:span label="[01] 기획/전략 수립" style="font-size:13px; font-weight:500; color:#334155;"/>
-                            </xf:group>
-                            <xf:group style="padding:10px; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-                                <w2:span label="[02] 화면 설계 및 기획" style="font-size:13px; font-weight:500; color:#334155;"/>
-                            </xf:group>
-                            <xf:group style="padding:10px; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-                                <w2:span label="[03] UI/UX 컴포넌트 개발" style="font-size:13px; font-weight:500; color:#334155;"/>
-                            </xf:group>
-                            <xf:group style="padding:10px; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-                                <w2:span label="[04] 백엔드 API 연동" style="font-size:13px; font-weight:500; color:#334155;"/>
-                            </xf:group>
-                            <xf:group style="padding:10px; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-                                <w2:span label="[05] 품질 테스트 및 QA" style="font-size:13px; font-weight:500; color:#334155;"/>
-                            </xf:group>
-                            <xf:group style="padding:10px; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-                                <w2:span label="[06] 서버 배포 및 모니터링" style="font-size:13px; font-weight:500; color:#334155;"/>
-                            </xf:group>
-                            <xf:group style="padding:10px; background:#ffffff; border:1px solid #cbd5e1; border-radius:6px;">
-                                <w2:span label="[07] 사용자 매뉴얼 작성" style="font-size:13px; font-weight:500; color:#334155;"/>
-                            </xf:group>
-                        </xf:group>
-                        <w2:textbox id="tbx_tip" label="💡 탭 전환 시 유의사항: 탭을 전환할 때 열려 있는 플로팅 체크콤보 레이어가 화면에 잔류하지 않도록 scwin.tac_main_ontabclick 이벤트에서 scwin.fn_closeMultiCheckLayer()를 자동 호출합니다." style="font-size:12px; color:#64748b; line-height:1.6;" />
-                    </xf:group>
-                </w2:content>
+                <w2:tabs id="tabs1"></w2:tabs>
             </w2:tabControl>
 
-            <!-- [추가] 통합 프리뷰 팝업 모달 마크업 -->
+            <!-- 통합 프리뷰 팝업 모달 마크업 -->
             <div id="ws_preview_modal_wrap" class="ws-preview-modal-wrap">
                 <div class="ws-preview-modal">
                     <div class="ws-preview-modal-header">
@@ -1387,7 +506,7 @@
 
                         <!-- 탭 1 그리드 데이터 -->
                         <div style="margin-bottom:20px;">
-                            <div class="ws-preview-section-title">📋 1. 담당 업무 배정 현황</div>
+                            <div class="ws-preview-section-title">📋 1. 담당 업무 배정 현황 (동적 WFrame 탭 1)</div>
                             <table class="w2grid">
                                 <thead>
                                     <tr>
@@ -1403,7 +522,7 @@
 
                         <!-- 탭 2 그리드 데이터 -->
                         <div>
-                            <div class="ws-preview-section-title">👥 2. 프로젝트 팀 현황</div>
+                            <div class="ws-preview-section-title">👥 2. 프로젝트 팀 현황 (동적 WFrame 탭 2)</div>
                             <table class="w2grid">
                                 <thead>
                                     <tr>
@@ -1421,38 +540,6 @@
                     <div class="ws-preview-modal-footer">
                         <button type="button" class="ws-btn-print" onclick="window.print()">🖨️ 인쇄하기</button>
                         <button type="button" class="ws-btn-close" onclick="scwin.fn_closePreviewModal()">닫기</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- [추가] 담당자 조회 모달 마크업 -->
-            <div id="ws_mgr_modal_wrap" class="ws-mgr-modal-wrap">
-                <div class="ws-mgr-modal">
-                    <div class="ws-mgr-modal-header">
-                        <h3>🔍 담당자 조회 (직원 검색)</h3>
-                        <button type="button" class="ws-btn-modal-close" onclick="scwin.fn_closeManagerSearch()" style="background:none; border:none; color:#ffffff; font-size:16px; cursor:pointer;">✕</button>
-                    </div>
-                    <div class="ws-mgr-modal-body">
-                        <div class="ws-mgr-search-bar">
-                            <input type="text" id="ws_mgr_search_input" class="ws-mgr-search-input" placeholder="사원명, 사번, 부서명 입력 후 검색..." onkeydown="if(event.keyCode===13)scwin.fn_renderManagerList(this.value);" />
-                            <button type="button" class="ws-btn-mgr-search" onclick="scwin.fn_renderManagerList(document.getElementById('ws_mgr_search_input').value)">검색</button>
-                        </div>
-                        <table class="w2grid">
-                            <thead>
-                                <tr>
-                                    <th style="width:70px;">사번</th>
-                                    <th style="width:90px;">성명</th>
-                                    <th style="width:70px;">직급</th>
-                                    <th style="width:130px;">부서</th>
-                                    <th>이메일</th>
-                                    <th style="width:70px;">선택</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ws_mgr_tbl_body"></tbody>
-                        </table>
-                    </div>
-                    <div class="ws-mgr-modal-footer">
-                        <button type="button" class="ws-btn-close" onclick="scwin.fn_closeManagerSearch()">닫기</button>
                     </div>
                 </div>
             </div>

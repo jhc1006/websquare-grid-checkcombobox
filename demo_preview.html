@@ -682,8 +682,8 @@
 <body>
 
 <div class="container">
-    <h2>WebSquare5 GridView 검색형 다중체크 &amp; 줄바꿈 렌더링 데모</h2>
-    <p class="subtitle"><strong>전체 전달사항</strong>과 <strong>3개 탭</strong>의 데이터를 화면에 보이는 상태(라벨 및 줄바꿈) 그대로 엑셀 다운로드 및 사전 프리뷰할 수 있습니다.</p>
+    <h2>WebSquare5 GridView 검색형 다중체크 &amp; 동적 WFrame(addTab) 렌더링 데모</h2>
+    <p class="subtitle">개별 WFrame XML 페이지(<code>tab1_task_assign.xml</code>, <code>tab2_team_status.xml</code>, <code>tab3_guide.xml</code>)를 메인 로딩 시 <code>tac_main.addTab()</code>으로 동적 생성 및 사전 로딩(<code>alwaysDraw: true</code>)하는 아키텍처 데모입니다.</p>
 
     <!-- 상단 공통 전달사항 및 액션 컨트롤 영역 -->
     <div class="ws-top-control">
@@ -876,6 +876,13 @@
 <script>
     // WebSquare scwin 컨텍스트 시뮬레이션
     const scwin = {
+        // 동적 탭 로딩 설정 목록 (WebSquare5 tac_main.addTab 설정 모사)
+        tabConfigs: [
+            { id: "tab1", label: "1. 담당 업무 배정 (메인 그리드)", src: "tab1_task_assign.xml", alwaysDraw: true },
+            { id: "tab2", label: "2. 프로젝트 팀 현황 (보조 그리드)", src: "tab2_team_status.xml", alwaysDraw: true },
+            { id: "tab3", label: "3. 공통 코드 설정 및 가이드", src: "tab3_guide.xml", alwaysDraw: true }
+        ],
+
         itemCodeMap: {
             "01": "기획/전략 수립",
             "02": "화면 설계 및 기획",

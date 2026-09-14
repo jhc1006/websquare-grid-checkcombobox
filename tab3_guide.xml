@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ev="http://www.w3.org/2001/xml-events"
+    xmlns:w2="http://www.inswave.com/websquare" 
+    xmlns:xf="http://www.w3.org/2002/xforms">
+    <head>
+        <w2:type>COMPONENT</w2:type>
+        <w2:buildDate/>
+        <xf:model>
+            <w2:dataCollection baseNode="map"/>
+            <w2:workflowCollection/>
+        </xf:model>
+
+        <style type="text/css"><![CDATA[
+            .ws-guide-card {
+                padding: 12px 14px;
+                background: #ffffff;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+                transition: transform 0.15s, box-shadow 0.15s;
+            }
+            .ws-guide-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                border-color: #93c5fd;
+            }
+            .ws-guide-box {
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 18px;
+            }
+            .ws-tip-box {
+                margin-top: 15px;
+                padding: 12px 16px;
+                background: #eff6ff;
+                border-left: 4px solid #3b82f6;
+                border-radius: 4px;
+                font-size: 13px;
+                color: #1e40af;
+                line-height: 1.6;
+            }
+        ]]></style>
+        <script type="text/javascript" lazy="false"><![CDATA[
+        scwin.onpageload = function() {};
+        ]]></script>
+    </head>
+    <body ev:onpageload="scwin.onpageload">
+        <xf:group id="grp_tab3_container" style="padding: 10px 0;">
+            <xf:group class="ws-guide-box">
+                <w2:textbox label="📌 공통 업무 코드 매핑 목록 (scwin.itemCodeMap)" style="font-size:15px; font-weight:700; margin-bottom:14px; color:#1e293b;" />
+                
+                <xf:group style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:18px;">
+                    <xf:group class="ws-guide-card">
+                        <w2:span label="[01] 기획/전략 수립" style="font-size:13px; font-weight:600; color:#334155;"/>
+                    </xf:group>
+                    <xf:group class="ws-guide-card">
+                        <w2:span label="[02] 화면 설계 및 기획" style="font-size:13px; font-weight:600; color:#334155;"/>
+                    </xf:group>
+                    <xf:group class="ws-guide-card">
+                        <w2:span label="[03] UI/UX 컴포넌트 개발" style="font-size:13px; font-weight:600; color:#334155;"/>
+                    </xf:group>
+                    <xf:group class="ws-guide-card">
+                        <w2:span label="[04] 백엔드 API 연동" style="font-size:13px; font-weight:600; color:#334155;"/>
+                    </xf:group>
+                    <xf:group class="ws-guide-card">
+                        <w2:span label="[05] 품질 테스트 및 QA" style="font-size:13px; font-weight:600; color:#334155;"/>
+                    </xf:group>
+                    <xf:group class="ws-guide-card">
+                        <w2:span label="[06] 서버 배포 및 모니터링" style="font-size:13px; font-weight:600; color:#334155;"/>
+                    </xf:group>
+                    <xf:group class="ws-guide-card">
+                        <w2:span label="[07] 사용자 매뉴얼 작성" style="font-size:13px; font-weight:600; color:#334155;"/>
+                    </xf:group>
+                </xf:group>
+
+                <div class="ws-tip-box">
+                    <strong>💡 동적 WFrame(addTab) 아키텍처 안내</strong><br/>
+                    본 화면은 메인 화면 로딩 시 <code>tac_main.addTab()</code> API에 의해 독립된 WFrame(<code>tab3_guide.xml</code>)으로 동적 임베딩되었습니다.<br/>
+                    <code>alwaysDraw: true</code> 옵션이 지정되어 사용자가 탭을 클릭하기 전에도 백그라운드 사전 렌더링이 완료되어 즉각적인 반응 속도를 제공합니다.
+                </div>
+            </xf:group>
+        </xf:group>
+    </body>
+</html>

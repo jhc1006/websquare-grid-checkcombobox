@@ -42,11 +42,20 @@ WebSquare5의 GridView 내 특정 컬럼에서 **검색 기능이 있는 다중 
    - **담당자 동적 Placeholder**: 평상시 빈 값일 때 `“클릭하여 입력”` ➔ 클릭/편집 포커스 진입 시 `“입력후 엔터”`로 실시간 전환
    - **엔터 시 담당자 조회 연동**: 담당자 입력 후 엔터(키코드 13) 입력 시 WebSquare 스타일의 **[담당자 조회 (직원 검색)]** 모달 팝업 오픈, 사원 목록 실시간 필터링 및 더블클릭/선택 버튼으로 그리드 셀 자동 반영
 
+9. **3개 탭의 개별 WFrame 파일 분리 및 메인 로딩 시 동적 `addTab()` 사전 로딩**:
+   - 탭 1, 탭 2, 탭 3을 각각 독립된 WebSquare5 XML 컴포넌트(`tab1_task_assign.xml`, `tab2_team_status.xml`, `tab3_guide.xml`)로 모듈화 분리
+   - 메인 화면(`grid_multicheck_combo.xml`) 로딩 시(`scwin.onpageload`), `tac_main.addTab()` API를 호출하여 3개 WFrame 페이지를 동적으로 불러와 생성
+   - **`alwaysDraw: true` 옵션 적용**: 비활성 탭이라도 백그라운드에서 사전에 DOM과 DataList를 완전 렌더링하여 첫 탭 전환 시 지연 없는 즉각적 반응 보장
+   - **스코프 연동**: `tac_main.getFrame(idx).getWindow()`를 통해 각 WFrame의 DataList 수정 여부 검사(`onbeforetabchange` + `$p.confirm`), 엑셀 다운로드, 통합 프리뷰 데이터 취합을 원활하게 수행
+
 ---
 
 ## 📂 파일 구조
 
-* `grid_multicheck_combo.xml`: WebSquare5 표준 XML 컴포넌트 소스 (DataList, CSS, scwin 스크립트, GridView 마크업 포함)
+* `grid_multicheck_combo.xml`: 메인 화면 컨테이너 (상단 공통 전달사항, 엑셀 다운로드/프리뷰 버튼, 동적 addTab WFrame 컨테이너)
+* `tab1_task_assign.xml`: [WFrame 탭 1] 담당 업무 배정 메인 그리드, 행 추가, 담당자 엔터 검색, 멀티체크 콤보
+* `tab2_team_status.xml`: [WFrame 탭 2] 프로젝트 팀 현황 보조 그리드, 팀 과업 멀티체크 콤보
+* `tab3_guide.xml`: [WFrame 탭 3] 공통 업무 코드 매핑 카드 및 WFrame 아키텍처 사용 가이드
 * `demo_preview.html`: 브라우저에서 더블 클릭하여 즉시 테스트해볼 수 있는 인터랙티브 시뮬레이터 데모
 * `SESSION_SUMMARY.md`: 개발 세션 질의응답(Q&A), 동적 탭 사전 로딩(Preload) 가이드, WebSquare confirm 연동 분석 등 총정리 문서
 

@@ -27,6 +27,7 @@
 | **4** | 탭이 동적 생성될 때 메인 로딩 시 모든 탭 페이지를 사전 로딩하는 방법은? | WebSquare5의 탭 지연 렌더링(Lazy Loading) 극복 가이드 제공 (`alwaysDraw="true"`, `addTab` 옵션, WFrame 순차 비동기 로딩 큐, 데이터 선조회 아키텍처) | 기술 자문 문서화 |
 | **5** | 탭에 변경 내용 있을 때 탭 이동 확인창을 WebSquare confirm으로 묻기 | `ev:onbeforetabchange` 이벤트 가로채기, DataList `getModifiedIndex()` 수정 감지, 비동기 `$p.confirm` 연동 및 `_allowTabChange` 플래그를 통한 안전 탭 전환 구현 | `grid_multicheck_combo.xml`<br>`demo_preview.html` |
 | **6** | 메인 그리드 행추가 버튼 추가, 담당자 text type placeholder “클릭하여 입력” 클릭후 편집모드 “입력후 엔터” 엔터하면 담당자 조회 | 메인 그리드 상단 `[➕ 행 추가]` 버튼(`dlt_sample.insertRow()`), `userName` 컬럼의 포커스 상태별 동적 placeholder(`"클릭하여 입력"` ↔ `"입력후 엔터"`), 엔터 키 이벤트(`oneditkeydown`) 시 WebSquare 스타일 [담당자 조회] 모달 팝업 연동 | `grid_multicheck_combo.xml`<br>`demo_preview.html` |
+| **7** | 탭을 3개의 페이지에서 불러와 동적으로 생성하게 작성해줘 | 3개 탭을 독립 WFrame XML(`tab1_task_assign.xml`, `tab2_team_status.xml`, `tab3_guide.xml`)로 분리하고, 메인 화면 로딩 시(`scwin.onpageload`) `tac_main.addTab()` API로 사전 로딩(`alwaysDraw: true`) 및 동적 생성 구현 | `grid_multicheck_combo.xml`<br>`tab1_task_assign.xml`<br>`tab2_team_status.xml`<br>`tab3_guide.xml`<br>`demo_preview.html` |
 
 ---
 
@@ -191,9 +192,76 @@ scwin.fn_preloadRemainingTabs = function() {
 
 ---
 
+### Q7. 3개 탭의 독립 WFrame 분리 및 메인 로딩 시 동적 `addTab()` 사전 로딩
+* **요구사항**: 탭 3개의 화면을 개별 WFrame XML 파일로 분리하고, 메인 페이지 로딩 시 자바스크립트(`tac_main.addTab()`)를 통해 동적으로 로드 및 사전 렌더링.
+* **구현 솔루션**:
+  1. **개별 WFrame XML 모듈화**:
+     - `tab1_task_assign.xml`: 담당 업무 배정, 행 추가, 담당자 검색, 메인 그리드 및 DataList(`dlt_sample`)
+     - `tab2_team_status.xml`: 프로젝트 팀 현황 보조 그리드 및 DataList(`dlt_team`)
+     - `tab3_guide.xml`: 공통 업무 코드 카드 및 WFrame 안내 가이드
+  2. **`tac_main.addTab()` 동적 로딩 & `alwaysDraw: true` 사전 렌더링**:
+     - `scwin.onpageload` ➔ `scwin.fn_initDynamicTabs()`에서 3개 탭을 순차적으로 `addTab()` 등록
+     - `{ alwaysDraw: true }` 옵션 적용으로 탭을 클릭하기 전에 이미 백그라운드에서 모든 WFrame DOM과 DataList가 로드되어 첫 탭 클릭 시 딜레이가 전혀 발생하지 않음
+  3. **스코프 연동 (`tac_main.getFrame`)**:
+     - 부모 메인 화면에서 `tac_main.getFrame(idx).getWindow()`를 통해 각 WFrame 내부의 DataList 수정 여부 검사(`fn_isTabModified`) 및 엑셀 다운로드, 프리뷰 데이터 수집을 완벽히 연동
+
+---
+
 ## 3. 핵심 아키텍처 및 소스 코드 가이드
 
-### WebSquare XML 탭 전환 확인 로직 (`grid_multicheck_combo.xml`)
+### WebSquare 메인 화면 동적 탭 생성 및 WFrame 연동 (`grid_multicheck_combo.xml`)
+
+```javascript
+scwin.onpageload = function() {
+    // 1. 공통 코드 매핑
+    scwin.itemCodeMap = { ... };
+
+    // 2. 동적 탭 생성 실행
+    scwin.fn_initDynamicTabs();
+};
+
+/**
+ * [동적 탭 생성] 개별 WFrame 파일들을 addTab으로 동적 추가 및 백그라운드 사전 로딩
+ */
+scwin.fn_initDynamicTabs = function() {
+    var tabConfigs = [
+        { id: "tab1", label: "1. 담당 업무 배정 (메인 그리드)", src: "tab1_task_assign.xml", closable: false },
+        { id: "tab2", label: "2. 프로젝트 팀 현황 (보조 그리드)", src: "tab2_team_status.xml", closable: false },
+        { id: "tab3", label: "3. 공통 코드 설정 및 가이드", src: "tab3_guide.xml", closable: false }
+    ];
+
+    tabConfigs.forEach(function(tabInfo, idx) {
+        tac_main.addTab(
+            tabInfo.id,
+            {
+                label: tabInfo.label,
+                closable: tabInfo.closable,
+                openAction: (idx === 0) ? "select" : "exist",
+                alwaysDraw: true // 메인 로딩 시 백그라운드 사전 렌더링!
+            },
+            {
+                src: tabInfo.src,
+                wframe: true
+            }
+        );
+    });
+};
+
+// [탭 변경 확인] WFrame 스코프의 DataList 수정 여부 검사
+scwin.fn_isTabModified = function(tabIndex) {
+    var frame = tac_main.getFrame(tabIndex);
+    if (!frame) return false;
+    var win = (typeof frame.getWindow === "function") ? frame.getWindow() : frame;
+    if (!win) return false;
+
+    if (tabIndex === 0 && win.dlt_sample) {
+        return win.dlt_sample.getModifiedIndex().length > 0;
+    } else if (tabIndex === 1 && win.dlt_team) {
+        return win.dlt_team.getModifiedIndex().length > 0;
+    }
+    return false;
+};
+```
 
 ```javascript
 // [탭 이동 확인 플래그] $p.confirm 콜백 후 프로그래밍 탭 이동 허용
@@ -252,8 +320,11 @@ scwin.tac_main_onbeforetabchange = function(currentTabIndex, newTabIndex) {
 
 | 산출물 | 설명 | 실행 / 확인 방법 |
 |:---|:---|:---|
-| [`grid_multicheck_combo.xml`](file:///c:/work/grid_multicheck_combo.xml) | WebSquare5 표준 소스 (컴포넌트, 스타일, 스크립트 통합본) | WebSquare Studio 화면 디렉토리에 복사 후 실행 |
-| [`demo_preview.html`](file:///c:/work/demo_preview.html) | WebSquare 무설치 독립형 브라우저 시뮬레이터 | Chrome / Edge에서 더블 클릭 실행 |
+| [`grid_multicheck_combo.xml`](file:///c:/work/grid_multicheck_combo.xml) | 메인 화면 컨테이너 (동적 addTab WFrame 컨테이너, 상단 전달사항, 엑셀/프리뷰) | WebSquare Studio 화면 디렉토리에 복사 후 실행 |
+| [`tab1_task_assign.xml`](file:///c:/work/tab1_task_assign.xml) | [동적 WFrame 1] 담당 업무 배정 그리드, 행 추가, 담당자 엔터 검색, 멀티체크 콤보 | 단독 또는 메인 화면을 통해 로딩 |
+| [`tab2_team_status.xml`](file:///c:/work/tab2_team_status.xml) | [동적 WFrame 2] 프로젝트 팀 현황 보조 그리드, 팀 과업 멀티체크 콤보 | 단독 또는 메인 화면을 통해 로딩 |
+| [`tab3_guide.xml`](file:///c:/work/tab3_guide.xml) | [동적 WFrame 3] 공통 업무 코드 카드 및 WFrame 가이드 안내 | 단독 또는 메인 화면을 통해 로딩 |
+| [`demo_preview.html`](file:///c:/work/demo_preview.html) | WebSquare 무설치 독립형 브라우저 시뮬레이터 (동적 탭 아키텍처 반영) | Chrome / Edge에서 더블 클릭 실행 |
 | [`README.md`](file:///c:/work/README.md) | 전체 프로젝트 기능 소개 및 가이드 문서 | 저장소 메인 README |
 | [`SESSION_SUMMARY.md`](file:///c:/work/SESSION_SUMMARY.md) | 본 세션 질의응답 및 기술 솔루션 총정리 문서 | 본 문서 |
 
