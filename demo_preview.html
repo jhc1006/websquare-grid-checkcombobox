@@ -467,7 +467,7 @@
                 <button type="button" class="ws-btn-preview" onclick="scwin.openPreviewModal()">👁️ 프리뷰</button>
             </div>
         </div>
-        <textarea id="txa_notice" class="ws-notice-textarea" placeholder="전달사항을 입력하세요...">금주 스프린트 배포 일정은 9월 18일(금) 18:00입니다. 각 담당자 및 팀은 다중 선택된 업무 항목의 진행 현황을 최신 상태로 유지해 주시기 바랍니다.</textarea>
+        <textarea id="txa_notice" class="ws-notice-textarea" placeholder="전달사항을 입력하세요..."></textarea>
     </div>
 
     <!-- 3개 탭 네비게이션 헤더 -->
@@ -548,7 +548,7 @@
             </div>
             <div class="ws-preview-modal-body">
                 <!-- 전달사항 블록 -->
-                <div class="ws-preview-notice-box">
+                <div id="ws_preview_notice_box" class="ws-preview-notice-box" style="display: none;">
                     <div class="ws-preview-section-title">📢 전체 전달사항</div>
                     <div id="ws_preview_notice_text" class="ws-preview-notice-content"></div>
                 </div>
@@ -845,8 +845,18 @@
 
         // 프리뷰 팝업 열기
         openPreviewModal: function() {
-            const noticeVal = document.getElementById("txa_notice").value.trim() || "(입력된 전달사항이 없습니다.)";
-            document.getElementById("ws_preview_notice_text").textContent = noticeVal;
+            const noticeInput = document.getElementById("txa_notice");
+            const placeholderText = noticeInput ? (noticeInput.getAttribute("placeholder") || "") : "";
+            const rawNotice = (noticeInput ? noticeInput.value : "").trim();
+            const hasNotice = (rawNotice !== "" && rawNotice !== placeholderText && rawNotice !== "(입력된 전달사항이 없습니다.)" && rawNotice !== "(전달사항 없음)");
+
+            const noticeBox = document.getElementById("ws_preview_notice_box");
+            if (hasNotice) {
+                if (noticeBox) noticeBox.style.display = "block";
+                document.getElementById("ws_preview_notice_text").textContent = rawNotice;
+            } else {
+                if (noticeBox) noticeBox.style.display = "none";
+            }
 
             // 탭 1 렌더링
             const tbl1 = document.getElementById("ws_preview_tbl1_body");
@@ -888,10 +898,28 @@
 
         // 엑셀 다운로드 (WebSquare useFormat: true 및 화면 표시대로 다운로드 시뮬레이션)
         downloadExcel: function() {
-            const noticeVal = document.getElementById("txa_notice").value.trim() || "(전달사항 없음)";
+            const noticeInput = document.getElementById("txa_notice");
+            const placeholderText = noticeInput ? (noticeInput.getAttribute("placeholder") || "") : "";
+            const rawNotice = (noticeInput ? noticeInput.value : "").trim();
+            const hasNotice = (rawNotice !== "" && rawNotice !== placeholderText && rawNotice !== "(전달사항 없음)" && rawNotice !== "(입력된 전달사항 없음)");
+
             const now = new Date();
             const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
             const filename = `통합_배정_및_팀현황_${dateStr}.xls`;
+
+            let noticeSectionHtml = "";
+            if (hasNotice) {
+                noticeSectionHtml = `
+                        <!-- 공통 전달사항 블록 -->
+                        <tr>
+                            <td colspan="5" class="notice-header">📢 공통 전달사항 (업무 지침)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="notice-body">${rawNotice.replace(/\n/g, '<br style="mso-data-placement:same-cell;"/>')}</td>
+                        </tr>
+                        <tr><td colspan="5" style="border:none;"></td></tr>
+                `;
+            }
 
             // HTML 기반 엑셀 스프레드시트 포맷 생성 (한글 및 멀티라인 개행 서식 완벽 보존)
             let excelHtml = `
@@ -930,16 +958,7 @@
                             <td colspan="5" class="title-row">📊 WebSquare5 통합 업무 및 팀 배정 현황</td>
                         </tr>
                         <tr><td colspan="5" style="border:none;"></td></tr>
-
-                        <!-- 공통 전달사항 블록 -->
-                        <tr>
-                            <td colspan="5" class="notice-header">📢 공통 전달사항 (업무 지침)</td>
-                        </tr>
-                        <tr>
-                            <td colspan="5" class="notice-body">${noticeVal.replace(/\n/g, '<br style="mso-data-placement:same-cell;"/>')}</td>
-                        </tr>
-                        <tr><td colspan="5" style="border:none;"></td></tr>
-
+                        ${noticeSectionHtml}
                         <!-- 섹션 1: 담당 업무 배정 현황 -->
                         <tr>
                             <td colspan="5" class="section-header">📋 1. 담당 업무 배정 현황 (메인 그리드)</td>
@@ -961,7 +980,8 @@
                         if (code) labels.push(scwin.itemCodeMap[code] || code);
                     });
                 }
-                const labelText = labels.length ? labels.join('<br style="mso-data-placement:same-cell;"/>') : '(선택 없음)';
+                // [수정] 엑셀 다운로드 시 placeholder('(선택 없음)') 노출 방지 -> 빈 값("") 출력
+                const labelText = labels.length ? labels.join('<br style="mso-data-placement:same-cell;"/>') : '';
                 excelHtml += `
                     <tr>
                         <td style="text-align:center;">${r.seq}</td>
@@ -996,7 +1016,8 @@
                         if (code) labels.push(scwin.itemCodeMap[code] || code);
                     });
                 }
-                const labelText = labels.length ? labels.join('<br style="mso-data-placement:same-cell;"/>') : '(선택 없음)';
+                // [수정] 엑셀 다운로드 시 placeholder('(선택 없음)') 노출 방지 -> 빈 값("") 출력
+                const labelText = labels.length ? labels.join('<br style="mso-data-placement:same-cell;"/>') : '';
                 excelHtml += `
                     <tr>
                         <td style="text-align:center;">${r.seq}</td>

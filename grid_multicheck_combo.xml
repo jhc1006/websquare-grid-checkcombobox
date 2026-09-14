@@ -374,6 +374,10 @@
          */
         scwin.fn_formatMultiCheck = function(data, formattedData, rowIndex, colIndex) {
             if (!data || typeof data !== "string" || data.trim() === "") {
+                // [수정] 엑셀 다운로드 시 placeholder('(선택 없음)') 노출 방지 -> 빈 값("") 출력
+                if (scwin._isExcelDownloading) {
+                    return "";
+                }
                 return '<span style="color:#94a3b8; font-style:italic;">(선택 없음)</span>';
             }
 
@@ -707,11 +711,24 @@
          * [엑셀 다운로드] WebSquare5 공식 API를 활용한 전달사항 + 다중 탭 그리드 통합 다운로드
          * - 복수 시트/그리드 지원: WebSquare.util.multipleExcelDownload 사용
          * - useFormat: true 옵션으로 커스텀 포맷터 줄바꿈 및 라벨 변환 상태 그대로 엑셀 셀에 반영
-         * - infoArr 옵션으로 각 시트 상단에 textarea 전달사항 자동 병합 삽입
+         * - [수정] 전달사항이 비어있거나 placeholder 상태인 경우 상단 infoArr 삽입을 완전히 생략하여 placeholder 노출 방지
+         * - [수정] scwin._isExcelDownloading 플래그를 통해 미선택 셀의 '(선택 없음)' placeholder 노출 방지
          */
         scwin.btn_excel_onclick = function() {
-            var noticeText = txa_notice.getValue() || "(입력된 전달사항 없음)";
+            var rawNotice = (txa_notice.getValue() || "").trim();
+            var placeholderText = (typeof txa_notice.getPlaceholder === "function" ? txa_notice.getPlaceholder() : "") || "전달사항을 입력하세요...";
+
+            // 전달사항이 비어있거나 placeholder 텍스트와 일치하면 엑셀 상단 공통 전달사항 행 제외
+            var hasNotice = (rawNotice !== "" && rawNotice !== placeholderText && rawNotice !== "(입력된 전달사항 없음)" && rawNotice !== "(전달사항 없음)");
             var fileName = "통합_배정_및_팀현황_" + new Date().toISOString().slice(0,10).replace(/-/g, "") + ".xlsx";
+
+            var infoArr1 = hasNotice ? [
+                { row: 0, col: 0, rowSpan: 2, colSpan: 4, text: "[공통 전달사항]\n" + rawNotice, style: "background-color:#eff6ff; font-weight:bold; color:#1d4ed8; text-align:left;" }
+            ] : [];
+
+            var infoArr2 = hasNotice ? [
+                { row: 0, col: 0, rowSpan: 2, colSpan: 5, text: "[공통 전달사항]\n" + rawNotice, style: "background-color:#eff6ff; font-weight:bold; color:#1d4ed8; text-align:left;" }
+            ] : [];
 
             var sheet1Options = {
                 gridId: "grd_main",
@@ -721,9 +738,7 @@
                 colDataFilter: true,
                 bodyStyle: "font-family:Malgun Gothic; font-size:10pt; line-height:1.5;",
                 headerStyle: "background-color:#f1f5f9; font-weight:bold; font-family:Malgun Gothic;",
-                infoArr: [
-                    { row: 0, col: 0, rowSpan: 2, colSpan: 4, text: "[공통 전달사항]\n" + noticeText, style: "background-color:#eff6ff; font-weight:bold; color:#1d4ed8; text-align:left;" }
-                ]
+                infoArr: infoArr1
             };
 
             var sheet2Options = {
@@ -734,22 +749,29 @@
                 colDataFilter: true,
                 bodyStyle: "font-family:Malgun Gothic; font-size:10pt; line-height:1.5;",
                 headerStyle: "background-color:#f1f5f9; font-weight:bold; font-family:Malgun Gothic;",
-                infoArr: [
-                    { row: 0, col: 0, rowSpan: 2, colSpan: 5, text: "[공통 전달사항]\n" + noticeText, style: "background-color:#eff6ff; font-weight:bold; color:#1d4ed8; text-align:left;" }
-                ]
+                infoArr: infoArr2
             };
 
-            if (window.WebSquare && WebSquare.util && typeof WebSquare.util.multipleExcelDownload === "function") {
-                WebSquare.util.multipleExcelDownload([sheet1Options, sheet2Options], { fileName: fileName });
-            } else if (typeof grd_main.advancedExcelDownload === "function") {
-                // 단일 그리드 fallback
-                grd_main.advancedExcelDownload({
-                    fileName: fileName,
-                    useFormat: true,
-                    infoArr: sheet1Options.infoArr
-                });
-            } else {
-                alert("WebSquare 엑셀 다운로드 엔진을 호출할 수 없습니다. (WebSquare 환경에서 실행해 주세요)");
+            // 엑셀 다운로드 중 플래그 활성화 -> 커스텀 포맷터에서 (선택 없음) placeholder 제외 처리
+            scwin._isExcelDownloading = true;
+
+            try {
+                if (window.WebSquare && WebSquare.util && typeof WebSquare.util.multipleExcelDownload === "function") {
+                    WebSquare.util.multipleExcelDownload([sheet1Options, sheet2Options], { fileName: fileName });
+                } else if (typeof grd_main.advancedExcelDownload === "function") {
+                    // 단일 그리드 fallback
+                    grd_main.advancedExcelDownload({
+                        fileName: fileName,
+                        useFormat: true,
+                        infoArr: sheet1Options.infoArr
+                    });
+                } else {
+                    alert("WebSquare 엑셀 다운로드 엔진을 호출할 수 없습니다. (WebSquare 환경에서 실행해 주세요)");
+                }
+            } finally {
+                setTimeout(function() {
+                    scwin._isExcelDownloading = false;
+                }, 1500);
             }
         };
 
@@ -757,7 +779,19 @@
          * [프리뷰] 전달사항 및 모든 탭의 데이터를 화면에 보이는 상태 그대로 모달 팝업으로 출력
          */
         scwin.btn_preview_onclick = function() {
-            var notice = txa_notice.getValue() || "(입력된 전달사항이 없습니다.)";
+            var rawNotice = (txa_notice.getValue() || "").trim();
+            var placeholderText = (typeof txa_notice.getPlaceholder === "function" ? txa_notice.getPlaceholder() : "") || "전달사항을 입력하세요...";
+            var hasNotice = (rawNotice !== "" && rawNotice !== placeholderText && rawNotice !== "(입력된 전달사항 없음)" && rawNotice !== "(전달사항 없음)");
+            
+            // 1. 전달사항 렌더링 (전달사항이 있는 경우만 박스 노출, 없으면 박스 숨김)
+            var noticeBox = document.getElementById("ws_preview_notice_box");
+            if (hasNotice) {
+                if (noticeBox) noticeBox.style.display = "block";
+                var previewNotice = document.getElementById("ws_preview_notice_text");
+                if (previewNotice) previewNotice.innerText = rawNotice;
+            } else {
+                if (noticeBox) noticeBox.style.display = "none";
+            }
             
             // 1. 전달사항 렌더링
             var previewNotice = document.getElementById("ws_preview_notice_text");
@@ -835,9 +869,7 @@
                         </xf:trigger>
                     </xf:group>
                 </xf:group>
-                <xf:textarea id="txa_notice" style="width:100%; height:75px; padding:10px; font-size:13px; border:1px solid #cbd5e1; border-radius:6px; resize:vertical; box-sizing:border-box; outline:none; font-family:inherit; line-height:1.5;" placeholder="예) 금주 스프린트 마감일은 목요일 18시까지이며, UI/UX 및 배포 관련 다중 태스크는 팀장 승인 후 반영해 주시기 바랍니다.">
-                    <![CDATA[금주 스프린트 배포 일정은 9월 18일(금) 18:00입니다. 각 담당자 및 팀은 다중 선택된 업무 항목의 진행 현황을 최신 상태로 유지해 주시기 바랍니다.]]>
-                </xf:textarea>
+                <xf:textarea id="txa_notice" style="width:100%; height:75px; padding:10px; font-size:13px; border:1px solid #cbd5e1; border-radius:6px; resize:vertical; box-sizing:border-box; outline:none; font-family:inherit; line-height:1.5;" placeholder="전달사항을 입력하세요..."></xf:textarea>
             </xf:group>
 
             <!-- 3개 탭 컨테이너 (w2:tabControl) -->
@@ -971,7 +1003,7 @@
                     </div>
                     <div class="ws-preview-modal-body">
                         <!-- 전달사항 블록 -->
-                        <div class="ws-preview-notice-box">
+                        <div id="ws_preview_notice_box" class="ws-preview-notice-box" style="display:none;">
                             <div class="ws-preview-section-title">📢 전달사항</div>
                             <div id="ws_preview_notice_text" class="ws-preview-notice-content"></div>
                         </div>

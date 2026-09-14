@@ -29,6 +29,7 @@ WebSquare5의 GridView 내 특정 컬럼에서 **검색 기능이 있는 다중 
 6. **상단 공통 전달사항 & WebSquare API 기반 엑셀 다운로드 / 프리뷰**:
    - 전체 탭 상단에 공통 지침 및 공지사항을 입력할 수 있는 `xf:textarea` (`txa_notice`) 영역 배치
    - **WebSquare 공식 API (`WebSquare.util.multipleExcelDownload`) 연동**: 전달사항 내용(`infoArr`)과 모든 탭의 그리드 데이터를 `useFormat: true`(커스텀 포맷터 줄바꿈 및 한글 라벨 보존) 옵션으로 엑셀 내보내기
+   - **플레이스홀더 필터링**: 전달사항 미입력 시 엑셀 및 프리뷰에서 전달사항 블록과 placeholder 텍스트가 자동 생략되며, 그리드 미선택 셀의 `(선택 없음)` placeholder도 엑셀 다운로드 시 깔끔한 빈 셀(`""`)로 출력
    - **통합 프리뷰 모달**: [프리뷰] 버튼 클릭 시 전달사항과 탭 1, 탭 2의 전체 데이터를 화면에 보이는 상태 그대로 팝업에 렌더링하며 즉시 인쇄(Print) 지원
 
 ---
