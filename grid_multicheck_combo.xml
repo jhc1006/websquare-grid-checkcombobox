@@ -309,6 +309,37 @@
         scwin._isExcelDownloading = false;
 
         /**
+         * [미오픈 탭 안전 데이터 수집 헬퍼]
+         * 사용자가 특정 탭을 한 번도 클릭하지 않았더라도 alwaysDraw: true 덕분에 각 WFrame의 DataList에서
+         * 전체 데이터(엑셀/프리뷰) 또는 수정된 데이터(일괄 저장 submission)를 안전하게 일괄 추출합니다.
+         * @param {Boolean} onlyModified - true: getModifiedJSON() (저장용), false: getAllJSON() (조회/엑셀용)
+         * @returns {Object} { notice: string, tab1Data: Array, tab2Data: Array }
+         */
+        scwin.fn_getAllTabData = function(onlyModified) {
+            var result = {
+                notice: (txa_notice.getValue() || "").trim(),
+                tab1Data: [],
+                tab2Data: []
+            };
+
+            // 탭 1 (tab1_task_assign.xml) WFrame 데이터 추출
+            var frame1 = tac_main.getFrame(0);
+            var win1 = frame1 ? ((typeof frame1.getWindow === "function") ? frame1.getWindow() : frame1) : null;
+            if (win1 && win1.dlt_sample) {
+                result.tab1Data = onlyModified ? win1.dlt_sample.getModifiedJSON() : win1.dlt_sample.getAllJSON();
+            }
+
+            // 탭 2 (tab2_team_status.xml) WFrame 데이터 추출 (탭 미오픈 시에도 사전 로딩으로 즉시 추출 가능)
+            var frame2 = tac_main.getFrame(1);
+            var win2 = frame2 ? ((typeof frame2.getWindow === "function") ? frame2.getWindow() : frame2) : null;
+            if (win2 && win2.dlt_team) {
+                result.tab2Data = onlyModified ? win2.dlt_team.getModifiedJSON() : win2.dlt_team.getAllJSON();
+            }
+
+            return result;
+        };
+
+        /**
          * [엑셀 다운로드] WebSquare 공식 API (WebSquare.util.multipleExcelDownload) 연동
          */
         scwin.btn_excel_onclick = function() {

@@ -207,7 +207,67 @@ scwin.fn_preloadRemainingTabs = function() {
 
 ---
 
+### Q8. 탭을 안 열고 다른 탭에 있는 데이터를 엑셀 다운로드나 일괄 저장(submission) 시 모두 포함되도록 보장하는 방법
+* **핵심 질문 배경**:
+  - WebSquare5의 `w2:tabControl`은 기본적으로 사용자가 탭을 클릭하는 시점에 비로소 화면을 로드하는 **지연 로딩(Lazy Loading / Draw on Demand)** 방식을 사용합니다.
+  - 이로 인해 사용자가 탭 1에서만 작업하고 탭 2를 클릭하지 않은 상태에서 `[엑셀 다운로드]`나 `[전체 저장(submission)]`을 누르면, 탭 2의 WFrame XML이 아직 로드되지 않아 **데이터가 누락되거나 null 에러가 발생하는 치명적인 문제**가 발생합니다.
+* **해결 및 보장 방법 (3가지 핵심 아키텍처)**:
+  1. **[방법 1] `alwaysDraw: true` 사전 로딩 옵션 (현재 프로젝트 적용 방식)**:
+     - `tac_main.addTab()` 동적 호출 시 `{ alwaysDraw: true }`를 전달하거나 `<w2:tabControl alwaysDraw="true">`를 선언합니다.
+     - 사용자가 탭 2를 클릭하지 않았더라도 메인 화면 로딩 시점에 모든 탭의 WFrame XML과 DataList가 백그라운드에 즉시 로드됩니다.
+     - 따라서 `tac_main.getFrame(1).getWindow().dlt_team.getAllJSON()`으로 미오픈 탭의 데이터도 100% 안전하게 추출할 수 있습니다.
+  2. **[방법 2] 부모 화면의 전역 DataCollection 관리 (엔터프라이즈 권장 패턴)**:
+     - 탭 내부 WFrame마다 개별 DataList를 두지 않고, 메인 부모 화면(`grid_multicheck_combo.xml`)의 `<w2:dataCollection>`에 `dlt_sample`, `dlt_team`을 전역 선언합니다.
+     - WFrame 화면에서는 부모의 DataList를 바인딩(`dataList="data:parent.dlt_team"`)하거나 포인터로 참조합니다.
+     - 이 방식은 탭이 열렸든 안 열렸든 상관없이 모든 데이터가 이미 부모 화면에 완벽하게 존재하므로, 일괄 submission이나 엑셀 다운로드 시 데이터 유실이 원천 차단됩니다.
+  3. **[방법 3] 안전 데이터 추출 공통 헬퍼 (`scwin.fn_getAllTabData`) 활용**:
+     - 엑셀 다운로드나 submission 직전에 `tac_main.getFrame(idx)`의 WFrame window 존재 여부를 안전하게 검사하여 데이터를 일괄 취합하는 헬퍼 함수를 구축합니다.
+
+---
+
 ## 3. 핵심 아키텍처 및 소스 코드 가이드
+
+### 미오픈 탭 데이터 안전 일괄 추출 헬퍼 (`grid_multicheck_combo.xml`)
+
+```javascript
+/**
+ * [미오픈 탭 안전 데이터 수집 헬퍼]
+ * 사용자가 특정 탭을 한 번도 클릭하지 않았더라도 alwaysDraw: true 덕분에 각 WFrame의 DataList에서
+ * 전체 데이터(엑셀/프리뷰) 또는 수정된 데이터(일괄 저장 submission)를 안전하게 일괄 추출합니다.
+ * @param {Boolean} onlyModified - true: getModifiedJSON() (저장용), false: getAllJSON() (조회/엑셀용)
+ * @returns {Object} { notice: string, tab1Data: Array, tab2Data: Array }
+ */
+scwin.fn_getAllTabData = function(onlyModified) {
+    var result = {
+        notice: (txa_notice.getValue() || "").trim(),
+        tab1Data: [],
+        tab2Data: []
+    };
+
+    // 탭 1 (tab1_task_assign.xml) WFrame 데이터 추출
+    var frame1 = tac_main.getFrame(0);
+    var win1 = frame1 ? ((typeof frame1.getWindow === "function") ? frame1.getWindow() : frame1) : null;
+    if (win1 && win1.dlt_sample) {
+        result.tab1Data = onlyModified ? win1.dlt_sample.getModifiedJSON() : win1.dlt_sample.getAllJSON();
+    }
+
+    // 탭 2 (tab2_team_status.xml) WFrame 데이터 추출 (탭 미오픈 시에도 사전 로딩으로 즉시 추출 가능)
+    var frame2 = tac_main.getFrame(1);
+    var win2 = frame2 ? ((typeof frame2.getWindow === "function") ? frame2.getWindow() : frame2) : null;
+    if (win2 && win2.dlt_team) {
+        result.tab2Data = onlyModified ? win2.dlt_team.getModifiedJSON() : win2.dlt_team.getAllJSON();
+    }
+
+    return result;
+};
+
+// [일괄 저장 submission 예시]
+scwin.btn_saveAll_onclick = function() {
+    var payload = scwin.fn_getAllTabData(true); // 수정된 데이터만 추출
+    console.log("전체 탭 일괄 저장 데이터:", payload);
+    // $p.executeSubmission(...)
+};
+```
 
 ### WebSquare 메인 화면 동적 탭 생성 및 WFrame 연동 (`grid_multicheck_combo.xml`)
 
