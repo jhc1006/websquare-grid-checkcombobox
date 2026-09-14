@@ -447,6 +447,89 @@
             font-weight: 500;
         }
         .ws-btn-print:hover { background: #0284c7; }
+
+        /* WebSquare 스타일 Confirm 모달 대화상자 */
+        .ws-confirm-modal-wrap {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 100001;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .ws-confirm-modal {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 8px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            border: 1px solid #cbd5e1;
+            overflow: hidden;
+            animation: modalPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ws-confirm-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 700;
+            font-size: 13px;
+            color: #1e293b;
+        }
+        .ws-confirm-modal-body {
+            padding: 20px 18px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #334155;
+            white-space: pre-wrap;
+        }
+        .ws-confirm-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        .ws-btn-confirm-ok {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+        .ws-btn-confirm-ok:hover { background: #1d4ed8; }
+        .ws-btn-confirm-cancel {
+            background: #e2e8f0;
+            color: #475569;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background 0.15s;
+        }
+        .ws-btn-confirm-cancel:hover { background: #cbd5e1; }
+        .ws-tab-modified-badge {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -592,6 +675,20 @@
             </div>
         </div>
     </div>
+
+    <!-- WebSquare Confirm 모달 -->
+    <div id="ws_confirm_modal_wrap" class="ws-confirm-modal-wrap">
+        <div class="ws-confirm-modal">
+            <div class="ws-confirm-modal-header">
+                <span>⚠️ WebSquare5 알림</span>
+            </div>
+            <div class="ws-confirm-modal-body" id="ws_confirm_modal_msg"></div>
+            <div class="ws-confirm-modal-footer">
+                <button type="button" class="ws-btn-confirm-ok" id="ws_btn_confirm_ok">확인</button>
+                <button type="button" class="ws-btn-confirm-cancel" id="ws_btn_confirm_cancel">취소</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -621,8 +718,85 @@
             { seq: "4", teamName: "신규 클라우드 TF", leader: "장영실 책임", taskCodes: "", progress: "15%" }
         ],
 
-        // 탭 전환 핸들러
-        switchTab: function(tabId) {
+        // 탭별 데이터 수정 상태 관리
+        tabModified: {
+            tab1: false,
+            tab2: false
+        },
+
+        // 탭 수정 플래그 설정 및 뱃지 업데이트
+        setTabModified: function(tabKey, isModified) {
+            scwin.tabModified[tabKey] = isModified;
+            const btn = document.querySelector(`.ws-tab-btn[data-tab="${tabKey}"]`);
+            if (btn) {
+                let badge = btn.querySelector(".ws-tab-modified-badge");
+                if (isModified) {
+                    if (!badge) {
+                        badge = document.createElement("span");
+                        badge.className = "ws-tab-modified-badge";
+                        badge.title = "수정된 데이터 있음";
+                        btn.appendChild(badge);
+                    }
+                } else {
+                    if (badge) badge.remove();
+                }
+            }
+        },
+
+        // WebSquare 스타일 confirm 팝업 호출 함수
+        showWebSquareConfirm: function(message, callback) {
+            const modal = document.getElementById("ws_confirm_modal_wrap");
+            const msgEl = document.getElementById("ws_confirm_modal_msg");
+            const okBtn = document.getElementById("ws_btn_confirm_ok");
+            const cancelBtn = document.getElementById("ws_btn_confirm_cancel");
+
+            if (!modal) {
+                if (window.confirm(message)) callback(true);
+                else callback(false);
+                return;
+            }
+
+            msgEl.textContent = message;
+            modal.style.display = "flex";
+
+            okBtn.onclick = function() {
+                modal.style.display = "none";
+                callback(true);
+            };
+            cancelBtn.onclick = function() {
+                modal.style.display = "none";
+                callback(false);
+            };
+        },
+
+        // 탭 전환 핸들러: 현재 탭에 수정사항이 있을 경우 WebSquare confirm으로 확인 후 전환
+        switchTab: function(targetTabId) {
+            const activeBtn = document.querySelector(".ws-tab-btn.active");
+            const currentTabId = activeBtn ? activeBtn.dataset.tab : "";
+
+            // 동일 탭 클릭 시 무시
+            if (currentTabId === targetTabId) return;
+
+            // 현재 탭에 수정 사항이 있는 경우 WebSquare confirm 창으로 확인
+            if (scwin.tabModified[currentTabId]) {
+                const tabNames = { tab1: "1. 담당 업무 배정", tab2: "2. 프로젝트 팀 현황", tab3: "3. 코드 설정 및 가이드" };
+                const curName = tabNames[currentTabId] || "현재 탭";
+                const confirmMsg = `[${curName}] 탭에 저장되지 않은 변경사항이 있습니다.\n다른 탭으로 이동하시겠습니까?`;
+
+                scwin.showWebSquareConfirm(confirmMsg, function(isOk) {
+                    if (isOk) {
+                        scwin.performTabSwitch(targetTabId);
+                    }
+                });
+                return;
+            }
+
+            // 수정 사항이 없으면 즉시 전환
+            scwin.performTabSwitch(targetTabId);
+        },
+
+        // 실제 탭 활성화 전환 처리
+        performTabSwitch: function(tabId) {
             document.querySelectorAll(".ws-tab-btn").forEach(btn => {
                 btn.classList.toggle("active", btn.dataset.tab === tabId);
             });
@@ -717,7 +891,15 @@
                 const finalCodes = Object.keys(layer.checkedCodeMap);
                 const ds = layer.dataset.targetDataset;
                 const rIdx = parseInt(layer.dataset.targetRow, 10);
-                scwin[ds][rIdx].taskCodes = finalCodes.join(",");
+                const oldCodes = scwin[ds][rIdx].taskCodes || "";
+                const newCodes = finalCodes.join(",");
+
+                // 데이터 변경 감지 시 탭 수정 상태 플래그 업데이트
+                if (oldCodes !== newCodes) {
+                    scwin[ds][rIdx].taskCodes = newCodes;
+                    const tabKey = (ds === "dataList") ? "tab1" : "tab2";
+                    scwin.setTabModified(tabKey, true);
+                }
                 
                 if (ds === "dataList") {
                     scwin.renderTable();

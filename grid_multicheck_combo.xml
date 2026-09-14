@@ -430,6 +430,81 @@
             return null;
         };
 
+        // [탭 이동 확인] 비동기 $p.confirm 콜백 후 프로그래밍 탭 이동 허용 플래그
+        scwin._allowTabChange = false;
+
+        /**
+         * [탭 변경 확인 헬퍼] 특정 탭의 DataList 수정 여부 검사
+         * @param {Number} tabIndex - 탭 인덱스 (0: 담당업무배정, 1: 프로젝트팀현황)
+         * @returns {Boolean} 수정 여부
+         */
+        scwin.fn_isTabModified = function(tabIndex) {
+            if (tabIndex === 0) {
+                // 탭 1 메인 그리드 (dlt_sample) 변경 여부 확인
+                if (typeof dlt_sample.getModifiedIndex === "function") {
+                    return dlt_sample.getModifiedIndex().length > 0;
+                }
+                if (typeof dlt_sample.isModified === "function") {
+                    return dlt_sample.isModified();
+                }
+            } else if (tabIndex === 1) {
+                // 탭 2 팀 현황 그리드 (dlt_team) 변경 여부 확인
+                if (typeof dlt_team.getModifiedIndex === "function") {
+                    return dlt_team.getModifiedIndex().length > 0;
+                }
+                if (typeof dlt_team.isModified === "function") {
+                    return dlt_team.isModified();
+                }
+            }
+            return false;
+        };
+
+        /**
+         * [요구사항] 탭 변경 전 이벤트 (WebSquare onbeforetabchange)
+         * - 현재 탭에 수정된 데이터가 있을 경우 WebSquare confirm($p.confirm)으로 이동 확인
+         * @param {Number} currentTabIndex - 현재 활성 탭 인덱스 (0, 1, 2)
+         * @param {Number} newTabIndex - 이동하려는 대상 탭 인덱스
+         * @returns {Boolean} true: 탭 이동 허용, false: 탭 이동 취소
+         */
+        scwin.tac_main_onbeforetabchange = function(currentTabIndex, newTabIndex) {
+            // 이미 확인창에서 [확인]을 눌러 프로그래밍 방식으로 탭 전환을 수행 중인 경우 즉시 통과
+            if (scwin._allowTabChange) {
+                scwin._allowTabChange = false;
+                return true;
+            }
+
+            // 현재 탭에 데이터 수정 내역이 있는지 검사
+            var isModified = scwin.fn_isTabModified(currentTabIndex);
+
+            if (isModified) {
+                var currentTabName = (currentTabIndex === 0) ? "담당 업무 배정" : (currentTabIndex === 1) ? "프로젝트 팀 현황" : "현재";
+                var confirmMsg = "[" + currentTabName + "] 탭에 저장되지 않은 변경사항이 있습니다.\n다른 탭으로 이동하시겠습니까?";
+
+                // WebSquare 공식 confirm ($p.confirm) 호출
+                if (window.$p && typeof $p.confirm === "function") {
+                    $p.confirm(confirmMsg, function(result) {
+                        if (result) {
+                            // 사용자가 [확인] 클릭 시: 플래그 활성화 후 대상 탭으로 이동
+                            scwin._allowTabChange = true;
+                            tac_main.setSelectedTabIndex(newTabIndex);
+                        }
+                    });
+                } else {
+                    // 브라우저 기본 confirm fallback
+                    if (confirm(confirmMsg)) {
+                        scwin._allowTabChange = true;
+                        tac_main.setSelectedTabIndex(newTabIndex);
+                    }
+                }
+
+                // $p.confirm은 비동기이므로 우선 현재 탭 전환을 일시 차단
+                return false;
+            }
+
+            // 변경 사항이 없으면 바로 탭 이동 허용
+            return true;
+        };
+
         /**
          * [탭 제어] TabControl 탭 클릭 시 열려 있는 플로팅 레이어 닫기
          */
@@ -880,7 +955,8 @@
                            useTabKeyOnly="true" 
                            useMoveKey="false" 
                            style="position: relative; width: 100%; min-height: 380px;" 
-                           ev:ontabclick="scwin.tac_main_ontabclick">
+                           ev:ontabclick="scwin.tac_main_ontabclick"
+                           ev:onbeforetabchange="scwin.tac_main_onbeforetabchange">
                 <w2:tabs id="tabs1">
                     <w2:tab id="tab1" label="1. 담당 업무 배정 (메인 그리드)" closable="false" />
                     <w2:tab id="tab2" label="2. 프로젝트 팀 현황 (보조 그리드)" closable="false" />
