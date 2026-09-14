@@ -24,7 +24,158 @@
             padding: 24px;
             border-radius: 8px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-            max-width: 900px;
+            max-width: 960px;
+        }
+
+        /* 상단 공통 전달사항 및 액션 컨트롤 영역 */
+        .ws-top-control {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .ws-top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            gap: 12px;
+        }
+        .ws-notice-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        .ws-notice-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .ws-top-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .ws-btn-excel {
+            background-color: #107c41;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(16, 124, 65, 0.2);
+            transition: all 0.15s ease;
+        }
+        .ws-btn-excel:hover {
+            background-color: #0b5a2f;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(16, 124, 65, 0.3);
+        }
+        .ws-btn-preview {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(37, 99, 235, 0.2);
+            transition: all 0.15s ease;
+        }
+        .ws-btn-preview:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(37, 99, 235, 0.3);
+        }
+        .ws-notice-textarea {
+            width: 100%;
+            height: 70px;
+            padding: 10px;
+            font-size: 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            resize: vertical;
+            box-sizing: border-box;
+            outline: none;
+            font-family: inherit;
+            line-height: 1.5;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: border-color 0.15s;
+        }
+        .ws-notice-textarea:focus {
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12);
+        }
+
+        /* 탭 컨트롤 네비게이션 헤더 */
+        .ws-tab-header {
+            display: flex;
+            border-bottom: 2px solid #e2e8f0;
+            gap: 6px;
+            margin-bottom: 22px;
+        }
+        .ws-tab-btn {
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.18s ease-in-out;
+        }
+        .ws-tab-btn:hover {
+            color: #1e293b;
+            background-color: #f1f5f9;
+        }
+        .ws-tab-btn.active {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+            background-color: #eff6ff;
+        }
+        .ws-tab-badge {
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 12px;
+            background: #e2e8f0;
+            color: #475569;
+            font-weight: 500;
+        }
+        .ws-tab-btn.active .ws-tab-badge {
+            background: #2563eb;
+            color: #ffffff;
+        }
+
+        /* 탭 패널 컨텐츠 */
+        .ws-tab-panel {
+            display: none;
+            animation: tabFadeIn 0.2s ease-in-out;
+        }
+        .ws-tab-panel.active {
+            display: block;
+        }
+        @keyframes tabFadeIn {
+            from { opacity: 0; transform: translateY(3px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* WebSquare GridView 모사 CSS */
@@ -149,27 +300,298 @@
         }
         .ws-btn-apply:hover { background: #1d4ed8; }
         .ws-btn-close:hover { background: #cbd5e1; }
+
+        /* 탭 3: 가이드 및 공통코드 카드 스타일 */
+        .code-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+            margin-bottom: 22px;
+        }
+        .code-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.15s ease;
+        }
+        .code-card:hover {
+            border-color: #93c5fd;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(37, 99, 235, 0.08);
+        }
+        .code-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 13px;
+            padding: 3px 9px;
+            border-radius: 4px;
+        }
+        .code-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+        .guide-box {
+            background: #f8fafc;
+            border-left: 4px solid #2563eb;
+            border-radius: 0 6px 6px 0;
+            padding: 14px 18px;
+            margin-top: 16px;
+            font-size: 13px;
+            line-height: 1.65;
+            color: #334155;
+        }
+        .guide-box strong {
+            color: #1e293b;
+        }
+
+        /* 프리뷰 팝업 모달 */
+        .ws-preview-modal-wrap {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            z-index: 100000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+        .ws-preview-modal {
+            background: #ffffff;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .ws-preview-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .ws-preview-modal-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #1e293b;
+        }
+        .ws-btn-modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #64748b;
+            cursor: pointer;
+            padding: 2px 6px;
+            line-height: 1;
+        }
+        .ws-btn-modal-close:hover { color: #0f172a; }
+        .ws-preview-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .ws-preview-notice-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 20px;
+        }
+        .ws-preview-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        .ws-preview-notice-content {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1e40af;
+            white-space: pre-wrap;
+        }
+        .ws-preview-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        .ws-btn-print {
+            background: #0ea5e9;
+            color: #ffffff;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .ws-btn-print:hover { background: #0284c7; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>WebSquare5 GridView 검색형 다중체크 & 줄바꿈 렌더링 데모</h2>
-    <p class="subtitle"><strong>'담당 업무 (다중 선택)'</strong> 셀을 클릭하면 플로팅 검색/체크 레이어가 열리며, 선택 후 [적용] 시 셀 내부에서 &lt;br/&gt; 개행 처리됩니다.</p>
+    <h2>WebSquare5 GridView 검색형 다중체크 &amp; 줄바꿈 렌더링 데모</h2>
+    <p class="subtitle"><strong>전체 전달사항</strong>과 <strong>3개 탭</strong>의 데이터를 화면에 보이는 상태(라벨 및 줄바꿈) 그대로 엑셀 다운로드 및 사전 프리뷰할 수 있습니다.</p>
 
-    <table class="w2grid" id="grd_main">
-        <thead>
-            <tr>
-                <th style="width: 60px;">순번</th>
-                <th style="width: 120px;">담당자</th>
-                <th style="width: 300px;">담당 업무 (다중 선택) 💡 클릭</th>
-                <th style="width: 160px;">비고</th>
-            </tr>
-        </thead>
-        <tbody id="grd_tbody">
+    <!-- 상단 공통 전달사항 및 액션 컨트롤 영역 -->
+    <div class="ws-top-control">
+        <div class="ws-top-header">
+            <div>
+                <div class="ws-notice-title">📢 전체 전달사항 (공지 및 업무 지침)</div>
+                <div class="ws-notice-desc">모든 탭의 담당자가 공통으로 확인할 지침이나 마감 일정을 입력하세요. [엑셀 다운로드] 및 [프리뷰] 시 함께 반영됩니다.</div>
+            </div>
+            <div class="ws-top-actions">
+                <button type="button" class="ws-btn-excel" onclick="scwin.downloadExcel()">📥 엑셀 다운로드</button>
+                <button type="button" class="ws-btn-preview" onclick="scwin.openPreviewModal()">👁️ 프리뷰</button>
+            </div>
+        </div>
+        <textarea id="txa_notice" class="ws-notice-textarea" placeholder="전달사항을 입력하세요...">금주 스프린트 배포 일정은 9월 18일(금) 18:00입니다. 각 담당자 및 팀은 다중 선택된 업무 항목의 진행 현황을 최신 상태로 유지해 주시기 바랍니다.</textarea>
+    </div>
+
+    <!-- 3개 탭 네비게이션 헤더 -->
+    <div class="ws-tab-header">
+        <button type="button" class="ws-tab-btn active" data-tab="tab1" onclick="scwin.switchTab('tab1')">
+            📋 1. 담당 업무 배정 (메인 그리드)
+            <span class="ws-tab-badge">4건</span>
+        </button>
+        <button type="button" class="ws-tab-btn" data-tab="tab2" onclick="scwin.switchTab('tab2')">
+            👥 2. 프로젝트 팀 현황 (보조 그리드)
+            <span class="ws-tab-badge">4팀</span>
+        </button>
+        <button type="button" class="ws-tab-btn" data-tab="tab3" onclick="scwin.switchTab('tab3')">
+            ⚙️ 3. 공통 코드 설정 및 가이드
+        </button>
+    </div>
+
+    <!-- 탭 1: 담당 업무 배정 메인 그리드 -->
+    <div class="ws-tab-panel active" id="tab1">
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">💡 <strong>'담당 업무 (다중 선택)'</strong> 셀을 클릭하여 검색/선택 후 [적용] 시 셀 내부에서 &lt;br/&gt; 개행 렌더링됩니다.</p>
+        <table class="w2grid" id="grd_main">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">순번</th>
+                    <th style="width: 130px;">담당자</th>
+                    <th style="width: 320px;">담당 업무 (다중 선택) 💡 클릭</th>
+                    <th style="width: 170px;">비고</th>
+                </tr>
+            </thead>
+            <tbody id="grd_tbody">
+                <!-- JS 동적 렌더링 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 탭 2: 프로젝트 팀 현황 보조 그리드 -->
+    <div class="ws-tab-panel" id="tab2">
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">💡 다중 탭 환경에서도 동일한 플로팅 다중 체크 레이어가 독립적으로 정상 작동하는지 검증합니다.</p>
+        <table class="w2grid" id="grd_team">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">순번</th>
+                    <th style="width: 160px;">팀명</th>
+                    <th style="width: 130px;">팀장/담당</th>
+                    <th style="width: 320px;">팀 핵심 과업 (다중 선택) 💡 클릭</th>
+                    <th style="width: 100px;">진척도</th>
+                </tr>
+            </thead>
+            <tbody id="grd_team_tbody">
+                <!-- JS 동적 렌더링 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 탭 3: 공통 코드 설정 및 가이드 -->
+    <div class="ws-tab-panel" id="tab3">
+        <h4 style="margin: 0 0 6px 0; font-size: 15px; color: #1e293b;">📌 등록된 공통 업무 코드 (scwin.itemCodeMap)</h4>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">드롭다운 체크 레이어 및 customFormatter에서 사용되는 기본 공통 코드 셋입니다.</p>
+
+        <div class="code-grid" id="code_grid_container">
             <!-- JS 동적 렌더링 -->
-        </tbody>
-    </table>
+        </div>
+
+        <div class="guide-box">
+            <strong>💡 WebSquare5 TabControl 및 엑셀 다운로드 API 핵심 팁:</strong><br/>
+            1. <strong>다중 시트 엑셀 다운로드 API</strong>: WebSquare에서는 <code>WebSquare.util.multipleExcelDownload([sheet1Opt, sheet2Opt], { fileName })</code>를 통해 탭 1 그리드와 탭 2 그리드를 각각의 시트로 분리하거나, <code>infoArr</code> 옵션으로 각 시트 최상단에 <code>txa_notice</code>(전달사항)를 자동 병합 삽입하여 내보낼 수 있습니다.<br/>
+            2. <strong>화면에 보이는 대로 출력 (useFormat: true)</strong>: <code>useFormat: true</code>를 설정하면 원본 코드값("01,03")이 아니라 커스텀 포맷터(줄바꿈 및 한글 라벨)가 적용된 텍스트 그대로 엑셀 셀에 서식 지정되어 출력됩니다.<br/>
+            3. <strong>탭 전환 시 레이어 자동 닫기</strong>: 사용자가 탭을 전환하면 <code>scwin.tac_main_ontabclick</code> 이벤트에서 <code>scwin.fn_closeMultiCheckLayer()</code>를 호출하여 이전 탭의 플로팅 레이어가 새 탭 화면에 잔류하는 현상을 방지합니다.
+        </div>
+    </div>
+
+    <!-- 프리뷰 팝업 모달 -->
+    <div id="ws_preview_modal_wrap" class="ws-preview-modal-wrap">
+        <div class="ws-preview-modal">
+            <div class="ws-preview-modal-header">
+                <h3>📑 전체 탭 데이터 &amp; 전달사항 프리뷰</h3>
+                <button type="button" class="ws-btn-modal-close" onclick="scwin.closePreviewModal()">✕</button>
+            </div>
+            <div class="ws-preview-modal-body">
+                <!-- 전달사항 블록 -->
+                <div class="ws-preview-notice-box">
+                    <div class="ws-preview-section-title">📢 전체 전달사항</div>
+                    <div id="ws_preview_notice_text" class="ws-preview-notice-content"></div>
+                </div>
+
+                <!-- 탭 1 그리드 데이터 -->
+                <div style="margin-bottom: 20px;">
+                    <div class="ws-preview-section-title">📋 1. 담당 업무 배정 현황</div>
+                    <table class="w2grid">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">순번</th>
+                                <th style="width: 120px;">담당자</th>
+                                <th>담당 업무 (다중 선택)</th>
+                                <th style="width: 160px;">비고</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ws_preview_tbl1_body"></tbody>
+                    </table>
+                </div>
+
+                <!-- 탭 2 그리드 데이터 -->
+                <div>
+                    <div class="ws-preview-section-title">👥 2. 프로젝트 팀 현황</div>
+                    <table class="w2grid">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">순번</th>
+                                <th style="width: 140px;">팀명</th>
+                                <th style="width: 120px;">팀장/담당</th>
+                                <th>팀 핵심 과업</th>
+                                <th style="width: 90px;">진척도</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ws_preview_tbl2_body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="ws-preview-modal-footer">
+                <button type="button" class="ws-btn-print" onclick="window.print()">🖨️ 인쇄하기</button>
+                <button type="button" class="ws-btn-close" onclick="scwin.closePreviewModal()">닫기</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -184,14 +606,35 @@
             "06": "서버 배포 및 모니터링",
             "07": "사용자 매뉴얼 작성"
         },
+        // 탭 1 메인 그리드 데이터셋 (dlt_sample)
         dataList: [
             { seq: "1", userName: "홍길동 수석", taskCodes: "01,03", remark: "화면 개발" },
             { seq: "2", userName: "이순신 책임", taskCodes: "02,04,06", remark: "아키텍처/배포" },
             { seq: "3", userName: "강감찬 선임", taskCodes: "05", remark: "QA 총괄" },
             { seq: "4", userName: "유관순 연구원", taskCodes: "", remark: "신규 배정 예정" }
         ],
+        // 탭 2 팀 현황 그리드 데이터셋 (dlt_team)
+        teamDataList: [
+            { seq: "1", teamName: "플랫폼 개발팀", leader: "최영 팀장", taskCodes: "03,04,06", progress: "85%" },
+            { seq: "2", teamName: "UI/UX 기획팀", leader: "신사임당 수석", taskCodes: "01,02", progress: "92%" },
+            { seq: "3", teamName: "품질보증 QA팀", leader: "정약용 선임", taskCodes: "05,07", progress: "78%" },
+            { seq: "4", teamName: "신규 클라우드 TF", leader: "장영실 책임", taskCodes: "", progress: "15%" }
+        ],
 
-        // customFormatter 로직
+        // 탭 전환 핸들러
+        switchTab: function(tabId) {
+            document.querySelectorAll(".ws-tab-btn").forEach(btn => {
+                btn.classList.toggle("active", btn.dataset.tab === tabId);
+            });
+            document.querySelectorAll(".ws-tab-panel").forEach(panel => {
+                panel.classList.toggle("active", panel.id === tabId);
+            });
+
+            // 탭 전환 시 열려있는 플로팅 레이어 닫기
+            scwin.fn_closeMultiCheckLayer();
+        },
+
+        // customFormatter 로직: 코드 -> 라벨 변환 및 <br/> 연결
         fn_formatMultiCheck: function(data) {
             if (!data || typeof data !== "string" || data.trim() === "") {
                 return '<span style="color:#94a3b8; font-style:italic;">(선택 없음)</span>';
@@ -207,8 +650,9 @@
             return labels.length ? labels.join("<br/>") : '<span style="color:#94a3b8; font-style:italic;">(선택 없음)</span>';
         },
 
-        // 플로팅 레이어 오픈
-        fn_openMultiCheckLayer: function(cellDom, rowIndex) {
+        // 플로팅 레이어 오픈 (datasetKey: 'dataList' 또는 'teamDataList')
+        fn_openMultiCheckLayer: function(cellDom, rowIndex, datasetKey) {
+            datasetKey = datasetKey || "dataList";
             let layer = document.getElementById("ws_floating_multicheck");
             if (!layer) {
                 layer = document.createElement("div");
@@ -218,10 +662,10 @@
             }
 
             layer.dataset.targetRow = rowIndex;
+            layer.dataset.targetDataset = datasetKey;
 
-            // 검색 전/후 체크 항목 유실 방지 상태 맵
             layer.checkedCodeMap = {};
-            const rawVal = scwin.dataList[rowIndex].taskCodes || "";
+            const rawVal = scwin[datasetKey][rowIndex].taskCodes || "";
             const selectedCodes = rawVal ? rawVal.split(",").map(c => c.trim()) : [];
             selectedCodes.forEach(code => {
                 if (code) layer.checkedCodeMap[code] = true;
@@ -251,7 +695,6 @@
             const spaceAbove = rect.top;
             let topPos;
 
-            // 밑에 공간이 적으면 바로 위에 레이어 표시
             if (spaceBelow < layerHeight && spaceAbove >= layerHeight) {
                 topPos = rect.top + window.scrollY - layerHeight - 4;
             } else if (spaceBelow < layerHeight && spaceAbove > spaceBelow) {
@@ -267,14 +710,20 @@
             const searchInput = document.getElementById("ws_multicheck_input");
             searchInput.focus();
             searchInput.addEventListener("input", (e) => {
-                // 상태 맵(layer.checkedCodeMap)을 그대로 전달하여 검색 전/후 체크 항목 영구 보존
                 scwin.fn_renderCheckList(e.target.value, layer.checkedCodeMap);
             });
 
             document.getElementById("ws_btn_apply").onclick = function() {
                 const finalCodes = Object.keys(layer.checkedCodeMap);
-                scwin.dataList[rowIndex].taskCodes = finalCodes.join(",");
-                scwin.renderTable();
+                const ds = layer.dataset.targetDataset;
+                const rIdx = parseInt(layer.dataset.targetRow, 10);
+                scwin[ds][rIdx].taskCodes = finalCodes.join(",");
+                
+                if (ds === "dataList") {
+                    scwin.renderTable();
+                } else {
+                    scwin.renderTeamTable();
+                }
                 scwin.fn_closeMultiCheckLayer();
             };
 
@@ -296,7 +745,6 @@
                 }
             }
 
-            // 체크된 항목 우선 상단 정렬
             items.sort((a, b) => {
                 if (a.isChecked && !b.isChecked) return -1;
                 if (!a.isChecked && b.isChecked) return 1;
@@ -328,19 +776,12 @@
             }
         },
 
-        fn_getCurrentlyCheckedCodes: function() {
-            const list = [];
-            document.querySelectorAll("#ws_multicheck_list input[type='checkbox']:checked").forEach(cb => {
-                list.push(cb.value);
-            });
-            return list;
-        },
-
         fn_closeMultiCheckLayer: function() {
             const layer = document.getElementById("ws_floating_multicheck");
             if (layer) layer.style.display = "none";
         },
 
+        // 탭 1 메인 테이블 렌더링
         renderTable: function() {
             const tbody = document.getElementById("grd_tbody");
             tbody.innerHTML = "";
@@ -348,37 +789,267 @@
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
                     <td style="text-align:center;">${row.seq}</td>
-                    <td style="text-align:center;">${row.userName}</td>
+                    <td style="text-align:center; font-weight:500;">${row.userName}</td>
                     <td class="cell-multiline" data-row="${idx}">${scwin.fn_formatMultiCheck(row.taskCodes)}</td>
                     <td>${row.remark}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // 셀 클릭 이벤트 바인딩
             tbody.querySelectorAll(".cell-multiline").forEach(cell => {
                 cell.onclick = function(e) {
                     const rIdx = parseInt(this.dataset.row, 10);
-                    scwin.fn_openMultiCheckLayer(this, rIdx);
+                    scwin.fn_openMultiCheckLayer(this, rIdx, "dataList");
                 };
             });
+        },
+
+        // 탭 2 팀 테이블 렌더링
+        renderTeamTable: function() {
+            const tbody = document.getElementById("grd_team_tbody");
+            tbody.innerHTML = "";
+            scwin.teamDataList.forEach((row, idx) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="text-align:center;">${row.seq}</td>
+                    <td style="font-weight:500;">${row.teamName}</td>
+                    <td style="text-align:center;">${row.leader}</td>
+                    <td class="cell-multiline" data-row="${idx}">${scwin.fn_formatMultiCheck(row.taskCodes)}</td>
+                    <td style="text-align:center; font-weight:bold; color:#2563eb;">${row.progress}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            tbody.querySelectorAll(".cell-multiline").forEach(cell => {
+                cell.onclick = function(e) {
+                    const rIdx = parseInt(this.dataset.row, 10);
+                    scwin.fn_openMultiCheckLayer(this, rIdx, "teamDataList");
+                };
+            });
+        },
+
+        // 탭 3 공통 코드 목록 렌더링
+        renderCodeGrid: function() {
+            const container = document.getElementById("code_grid_container");
+            container.innerHTML = "";
+            for (let code in scwin.itemCodeMap) {
+                const card = document.createElement("div");
+                card.className = "code-card";
+                card.innerHTML = `
+                    <span class="code-badge">${code}</span>
+                    <span class="code-label">${scwin.itemCodeMap[code]}</span>
+                `;
+                container.appendChild(card);
+            }
+        },
+
+        // 프리뷰 팝업 열기
+        openPreviewModal: function() {
+            const noticeVal = document.getElementById("txa_notice").value.trim() || "(입력된 전달사항이 없습니다.)";
+            document.getElementById("ws_preview_notice_text").textContent = noticeVal;
+
+            // 탭 1 렌더링
+            const tbl1 = document.getElementById("ws_preview_tbl1_body");
+            tbl1.innerHTML = "";
+            scwin.dataList.forEach(r => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="text-align:center;">${r.seq}</td>
+                    <td style="text-align:center; font-weight:500;">${r.userName}</td>
+                    <td style="line-height:1.5;">${scwin.fn_formatMultiCheck(r.taskCodes)}</td>
+                    <td>${r.remark}</td>
+                `;
+                tbl1.appendChild(tr);
+            });
+
+            // 탭 2 렌더링
+            const tbl2 = document.getElementById("ws_preview_tbl2_body");
+            tbl2.innerHTML = "";
+            scwin.teamDataList.forEach(r => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="text-align:center;">${r.seq}</td>
+                    <td style="font-weight:500;">${r.teamName}</td>
+                    <td style="text-align:center;">${r.leader}</td>
+                    <td style="line-height:1.5;">${scwin.fn_formatMultiCheck(r.taskCodes)}</td>
+                    <td style="text-align:center; font-weight:bold; color:#2563eb;">${r.progress}</td>
+                `;
+                tbl2.appendChild(tr);
+            });
+
+            scwin.fn_closeMultiCheckLayer();
+            document.getElementById("ws_preview_modal_wrap").style.display = "flex";
+        },
+
+        // 프리뷰 팝업 닫기
+        closePreviewModal: function() {
+            document.getElementById("ws_preview_modal_wrap").style.display = "none";
+        },
+
+        // 엑셀 다운로드 (WebSquare useFormat: true 및 화면 표시대로 다운로드 시뮬레이션)
+        downloadExcel: function() {
+            const noticeVal = document.getElementById("txa_notice").value.trim() || "(전달사항 없음)";
+            const now = new Date();
+            const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+            const filename = `통합_배정_및_팀현황_${dateStr}.xls`;
+
+            // HTML 기반 엑셀 스프레드시트 포맷 생성 (한글 및 멀티라인 개행 서식 완벽 보존)
+            let excelHtml = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office"
+                      xmlns:x="urn:schemas-microsoft-com:office:excel"
+                      xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>통합현황</x:Name>
+                                    <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table { border-collapse: collapse; font-family: 'Malgun Gothic', sans-serif; font-size: 11pt; }
+                        th { background-color: #f1f5f9; color: #1e293b; font-weight: bold; border: 1px solid #94a3b8; text-align: center; padding: 6px; }
+                        td { border: 1px solid #cbd5e1; padding: 6px; vertical-align: middle; }
+                        .title-row { font-size: 14pt; font-weight: bold; color: #1e3a8a; }
+                        .notice-header { background-color: #dbeafe; font-weight: bold; color: #1e40af; }
+                        .notice-body { background-color: #eff6ff; color: #1e3a8a; white-space: pre-wrap; vertical-align: top; }
+                        .section-header { font-size: 12pt; font-weight: bold; background-color: #e2e8f0; color: #0f172a; }
+                        .multiline-cell { white-space: normal; mso-data-placement: same-cell; }
+                    </style>
+                </head>
+                <body>
+                    <table>
+                        <!-- 타이틀 -->
+                        <tr>
+                            <td colspan="5" class="title-row">📊 WebSquare5 통합 업무 및 팀 배정 현황</td>
+                        </tr>
+                        <tr><td colspan="5" style="border:none;"></td></tr>
+
+                        <!-- 공통 전달사항 블록 -->
+                        <tr>
+                            <td colspan="5" class="notice-header">📢 공통 전달사항 (업무 지침)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="notice-body">${noticeVal.replace(/\n/g, '<br style="mso-data-placement:same-cell;"/>')}</td>
+                        </tr>
+                        <tr><td colspan="5" style="border:none;"></td></tr>
+
+                        <!-- 섹션 1: 담당 업무 배정 현황 -->
+                        <tr>
+                            <td colspan="5" class="section-header">📋 1. 담당 업무 배정 현황 (메인 그리드)</td>
+                        </tr>
+                        <tr>
+                            <th style="width: 50px;">순번</th>
+                            <th style="width: 120px;">담당자</th>
+                            <th style="width: 280px;">담당 업무 (화면 표시 라벨)</th>
+                            <th style="width: 140px;">비고</th>
+                            <th style="border:none; width: 50px;"></th>
+                        </tr>
+            `;
+
+            scwin.dataList.forEach(r => {
+                const labels = [];
+                if (r.taskCodes) {
+                    r.taskCodes.split(",").forEach(c => {
+                        const code = c.trim();
+                        if (code) labels.push(scwin.itemCodeMap[code] || code);
+                    });
+                }
+                const labelText = labels.length ? labels.join('<br style="mso-data-placement:same-cell;"/>') : '(선택 없음)';
+                excelHtml += `
+                    <tr>
+                        <td style="text-align:center;">${r.seq}</td>
+                        <td style="text-align:center;">${r.userName}</td>
+                        <td class="multiline-cell">${labelText}</td>
+                        <td>${r.remark}</td>
+                        <td style="border:none;"></td>
+                    </tr>
+                `;
+            });
+
+            excelHtml += `
+                        <tr><td colspan="5" style="border:none;"></td></tr>
+                        <!-- 섹션 2: 프로젝트 팀 현황 -->
+                        <tr>
+                            <td colspan="5" class="section-header">👥 2. 프로젝트 팀 현황 (보조 그리드)</td>
+                        </tr>
+                        <tr>
+                            <th style="width: 50px;">순번</th>
+                            <th style="width: 150px;">팀명</th>
+                            <th style="width: 110px;">팀장/담당</th>
+                            <th style="width: 280px;">팀 핵심 과업 (화면 표시 라벨)</th>
+                            <th style="width: 80px;">진척도</th>
+                        </tr>
+            `;
+
+            scwin.teamDataList.forEach(r => {
+                const labels = [];
+                if (r.taskCodes) {
+                    r.taskCodes.split(",").forEach(c => {
+                        const code = c.trim();
+                        if (code) labels.push(scwin.itemCodeMap[code] || code);
+                    });
+                }
+                const labelText = labels.length ? labels.join('<br style="mso-data-placement:same-cell;"/>') : '(선택 없음)';
+                excelHtml += `
+                    <tr>
+                        <td style="text-align:center;">${r.seq}</td>
+                        <td>${r.teamName}</td>
+                        <td style="text-align:center;">${r.leader}</td>
+                        <td class="multiline-cell">${labelText}</td>
+                        <td style="text-align:center; font-weight:bold; color:#1d4ed8;">${r.progress}</td>
+                    </tr>
+                `;
+            });
+
+            excelHtml += `
+                    </table>
+                </body>
+                </html>
+            `;
+
+            // 파일 다운로드 트리거
+            const blob = new Blob([excelHtml], { type: "application/vnd.ms-excel;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
     };
 
     // 초기화
     window.onload = function() {
         scwin.renderTable();
+        scwin.renderTeamTable();
+        scwin.renderCodeGrid();
         
         // 1. 외부 클릭 시 닫기
         document.addEventListener("mousedown", (e) => {
             const layer = document.getElementById("ws_floating_multicheck");
-            if (!layer || layer.style.display !== "block") return;
-            if (!layer.contains(e.target) && !e.target.closest(".cell-multiline")) {
-                scwin.fn_closeMultiCheckLayer();
+            if (layer && layer.style.display === "block") {
+                if (!layer.contains(e.target) && !e.target.closest(".cell-multiline")) {
+                    scwin.fn_closeMultiCheckLayer();
+                }
+            }
+
+            // 모달 백드롭 클릭 시 모달 닫기
+            const modal = document.getElementById("ws_preview_modal_wrap");
+            if (modal && modal.style.display === "flex" && e.target === modal) {
+                scwin.closePreviewModal();
             }
         });
 
-        // 2. 외부 스크롤 시 닫기 (capture: true로 부모 및 윈도우 스크롤 감지, 레이어 자체 내부 스크롤은 유지)
+        // 2. 외부 스크롤 시 닫기
         window.addEventListener("scroll", (e) => {
             const layer = document.getElementById("ws_floating_multicheck");
             if (!layer || layer.style.display !== "block") return;
@@ -387,6 +1058,14 @@
             }
             scwin.fn_closeMultiCheckLayer();
         }, true);
+
+        // 3. ESC 키 입력 시 팝업 닫기
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                scwin.fn_closeMultiCheckLayer();
+                scwin.closePreviewModal();
+            }
+        });
     };
 </script>
 </body>

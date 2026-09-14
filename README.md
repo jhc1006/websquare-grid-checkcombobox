@@ -21,6 +21,16 @@ WebSquare5의 GridView 내 특정 컬럼에서 **검색 기능이 있는 다중 
 4. **단방향 데이터 동기화**:
    - [적용] 클릭 시 `dlt_sample.setCellData()`를 호출하여 WebSquare 데이터 바인딩 엔진을 통해 셀 포맷터를 자동 재실행합니다.
 
+5. **다중 탭(TabControl) 환경 지원 및 레이어 자동 제어**:
+   - `w2:tabControl` 기반 3개 탭(1. 담당 업무 배정, 2. 프로젝트 팀 현황, 3. 공통 코드 설정 및 가이드) 구성
+   - 탭 전환 시(`tac_main_ontabclick`) 열려 있는 플로팅 체크콤보 레이어를 자동 닫음 처리하여 잔류 현상 방지
+   - 복수의 GridView 및 DataList(`dlt_sample`, `dlt_team`)에서 동일한 CheckComboBox 컴포넌트를 유연하게 재사용 가능
+
+6. **상단 공통 전달사항 & WebSquare API 기반 엑셀 다운로드 / 프리뷰**:
+   - 전체 탭 상단에 공통 지침 및 공지사항을 입력할 수 있는 `xf:textarea` (`txa_notice`) 영역 배치
+   - **WebSquare 공식 API (`WebSquare.util.multipleExcelDownload`) 연동**: 전달사항 내용(`infoArr`)과 모든 탭의 그리드 데이터를 `useFormat: true`(커스텀 포맷터 줄바꿈 및 한글 라벨 보존) 옵션으로 엑셀 내보내기
+   - **통합 프리뷰 모달**: [프리뷰] 버튼 클릭 시 전달사항과 탭 1, 탭 2의 전체 데이터를 화면에 보이는 상태 그대로 팝업에 렌더링하며 즉시 인쇄(Print) 지원
+
 ---
 
 ## 📂 파일 구조
