@@ -225,6 +225,27 @@ scwin.fn_preloadRemainingTabs = function() {
 
 ---
 
+### Q9. WebSquare5에서 `alwaysDraw`가 동작하지 않는 대표적인 원인 및 해결책
+* **1. `addTab()` API 파라미터 전달 위치 불일치 (`tabOptions` vs `contentOptions`)**:
+  - WebSquare5의 `tac_main.addTab(tabId, tabOptions, contentOptions)`는 2번째 인자(`tabOptions`)와 3번째 인자(`contentOptions`)를 가집니다.
+  - WebSquare SP 버전(SP3, SP4, SP5)에 따라 `alwaysDraw`를 탭 레벨 옵션으로 인식하는 엔진과 WFrame/컨텐츠 레벨 옵션으로 인식하는 엔진이 상이합니다.
+  - **해결책**: `addTab` 호출 시 2번째와 3번째 인자 양쪽에 모두 `alwaysDraw: true`를 선언하여 엔진 버전 간 호환성을 100% 보장합니다.
+* **2. WFrame 비동기(Asynchronous) 로딩 시점 차이 (Timing Issue)**:
+  - `alwaysDraw: true`를 주더라도 WFrame XML 파일을 서버에서 HTTP로 다운로드하고 DOM을 파싱/생성하는 과정은 **비동기**로 처리됩니다.
+  - 메인 화면의 `scwin.onpageload`에서 `tac_main.addTab()`을 호출한 직후, 같은 동기 실행 블록 내에서 바로 `tac_main.getFrame(1).getWindow().dlt_team`에 접근하면 아직 XML 파싱이 끝나지 않아 `getWindow()`가 `null`이거나 객체가 비어 있습니다.
+  - **해결책**: 탭 WFrame 로딩 완료 이벤트(`onwframeload`)를 수신하거나, `setTimeout` 또는 비동기 큐를 통해 WFrame이 완전히 준비된 시점에 데이터에 접근해야 합니다.
+* **3. 정적 XML 선언 시 `<w2:content>` 태그 속성 누락**:
+  - `<w2:tabControl alwaysDraw="true">`만 선언하고 내부의 개별 탭 컨텐츠인 `<w2:content alwaysDraw="true">` 속성을 생략하면, 하위 엔진에서 컨텐츠 레벨 지연 로딩이 기본 적용되어 WFrame이 로드되지 않을 수 있습니다.
+* **4. WFrame 내부의 `submission` 비동기 조회 미완료**:
+  - `alwaysDraw: true`로 화면(DOM)과 컴포넌트는 그려졌더라도, WFrame의 `scwin.onpageload`에서 데이터를 가져오는 서버 `submission` 통신이 완료되지 않았을 수 있습니다. 화면 컴포넌트 렌더링 완료와 데이터 로딩 완료를 구분해야 합니다.
+* **5. `websquare.xml` 엔진 전역 설정 및 프로젝트 공통 래퍼에 의한 오버라이드**:
+  - 시스템 관리자의 `websquare.xml` 설정 파일에 `<tabControl><lazyDraw value="true"/></tabControl>` 또는 `<alwaysDraw value="false"/>`가 전역으로 강제되어 있으면 개별 화면 속성이 무시될 수 있습니다.
+  - 또한 프로젝트 공통 유틸(예: `com.addTab(...)`)이 내부적으로 `alwaysDraw` 옵션을 전달하지 않고 필터링하는 경우도 빈번합니다.
+* **6. WFrame 스코프 격리(`scope="true"`)로 인한 잘못된 접근**:
+  - WFrame은 독립 스코프로 격리되므로 전역 `window.dlt_team`으로 접근하면 `undefined`가 발생합니다. 반드시 `tac_main.getFrame(tabIndex).getWindow()` 또는 `getObj("dlt_team")`으로 접근해야 합니다.
+
+---
+
 ## 3. 핵심 아키텍처 및 소스 코드 가이드
 
 ### 미오픈 탭 데이터 안전 일괄 추출 헬퍼 (`grid_multicheck_combo.xml`)

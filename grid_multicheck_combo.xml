@@ -225,18 +225,19 @@
             ];
 
             tabConfigs.forEach(function(tabInfo, idx) {
-                // WebSquare 공식 addTab API 호출
+                // WebSquare 공식 addTab API 호출 (tabOptions 및 contentOptions 양쪽에 alwaysDraw 선언)
                 tac_main.addTab(
                     tabInfo.id,
                     {
                         label: tabInfo.label,
                         closable: tabInfo.closable,
                         openAction: (idx === 0) ? "select" : "exist",
-                        alwaysDraw: true // [핵심] 메인 로딩 시 비활성 탭이라도 백그라운드 사전 로딩 완료
+                        alwaysDraw: true // WebSquare TabControl 탭 옵션 레벨 사전 로딩
                     },
                     {
                         src: tabInfo.src,
-                        wframe: true
+                        wframe: true,
+                        alwaysDraw: true // WebSquare Content/WFrame 레벨 사전 로딩 (버전별 스펙 호환 보장)
                     }
                 );
             });
