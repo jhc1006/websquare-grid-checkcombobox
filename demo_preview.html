@@ -530,6 +530,153 @@
             margin-left: 4px;
             vertical-align: middle;
         }
+
+        /* 행 추가 버튼 */
+        .ws-btn-add-row {
+            background: #ffffff;
+            color: #2563eb;
+            border: 1px solid #2563eb;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+        .ws-btn-add-row:hover {
+            background: #eff6ff;
+            border-color: #1d4ed8;
+            color: #1d4ed8;
+        }
+
+        /* 그리드 내 담당자 편집 인풋 */
+        .ws-grid-input-user {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 5px 8px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background: transparent;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: #1e293b;
+            outline: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .ws-grid-input-user:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .ws-grid-input-user:focus {
+            background: #ffffff;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+            cursor: text;
+        }
+        .ws-grid-input-user::placeholder {
+            color: #94a3b8;
+            font-style: italic;
+            font-weight: normal;
+        }
+
+        /* 담당자 조회 모달 스타일 */
+        .ws-mgr-modal-wrap {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100002;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .ws-mgr-modal {
+            background: #ffffff;
+            width: 100%;
+            max-width: 680px;
+            max-height: 85vh;
+            border-radius: 10px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .ws-mgr-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .ws-mgr-modal-header h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .ws-mgr-modal-body {
+            padding: 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .ws-mgr-search-bar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .ws-mgr-search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+        }
+        .ws-mgr-search-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+        }
+        .ws-btn-mgr-search {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background 0.15s;
+        }
+        .ws-btn-mgr-search:hover { background: #1d4ed8; }
+        .ws-btn-mgr-select {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .ws-btn-mgr-select:hover {
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .ws-mgr-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px 16px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
     </style>
 </head>
 <body>
@@ -570,12 +717,15 @@
 
     <!-- 탭 1: 담당 업무 배정 메인 그리드 -->
     <div class="ws-tab-panel active" id="tab1">
-        <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">💡 <strong>'담당 업무 (다중 선택)'</strong> 셀을 클릭하여 검색/선택 후 [적용] 시 셀 내부에서 &lt;br/&gt; 개행 렌더링됩니다.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+            <p style="font-size: 13px; color: #64748b; margin: 0;">💡 <strong>'담당자'</strong>를 클릭하여 입력 후 엔터 시 직원을 조회할 수 있으며, <strong>'담당 업무'</strong>를 클릭하여 다중 선택할 수 있습니다.</p>
+            <button type="button" class="ws-btn-add-row" onclick="scwin.addRow()">➕ 행 추가</button>
+        </div>
         <table class="w2grid" id="grd_main">
             <thead>
                 <tr>
                     <th style="width: 60px;">순번</th>
-                    <th style="width: 130px;">담당자</th>
+                    <th style="width: 140px;">담당자 💡 클릭</th>
                     <th style="width: 320px;">담당 업무 (다중 선택) 💡 클릭</th>
                     <th style="width: 170px;">비고</th>
                 </tr>
@@ -686,6 +836,38 @@
             <div class="ws-confirm-modal-footer">
                 <button type="button" class="ws-btn-confirm-ok" id="ws_btn_confirm_ok">확인</button>
                 <button type="button" class="ws-btn-confirm-cancel" id="ws_btn_confirm_cancel">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WebSquare 담당자 조회 모달 -->
+    <div id="ws_mgr_modal_wrap" class="ws-mgr-modal-wrap">
+        <div class="ws-mgr-modal">
+            <div class="ws-mgr-modal-header">
+                <h3>🔍 담당자 조회 (직원 검색)</h3>
+                <button type="button" class="ws-btn-modal-close" onclick="scwin.closeManagerModal()" style="background:none; border:none; color:#ffffff; font-size:16px; cursor:pointer;">✕</button>
+            </div>
+            <div class="ws-mgr-modal-body">
+                <div class="ws-mgr-search-bar">
+                    <input type="text" id="ws_mgr_search_input" class="ws-mgr-search-input" placeholder="사원명, 사번, 부서명 입력 후 검색..." onkeydown="if(event.key==='Enter'||event.keyCode===13)scwin.renderManagerModalList(this.value);" />
+                    <button type="button" class="ws-btn-mgr-search" onclick="scwin.renderManagerModalList(document.getElementById('ws_mgr_search_input').value)">검색</button>
+                </div>
+                <table class="w2grid">
+                    <thead>
+                        <tr>
+                            <th style="width:70px;">사번</th>
+                            <th style="width:90px;">성명</th>
+                            <th style="width:70px;">직급</th>
+                            <th style="width:130px;">부서</th>
+                            <th>이메일</th>
+                            <th style="width:70px;">선택</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ws_mgr_tbl_body"></tbody>
+                </table>
+            </div>
+            <div class="ws-mgr-modal-footer">
+                <button type="button" class="ws-btn-close" onclick="scwin.closeManagerModal()">닫기</button>
             </div>
         </div>
     </div>
@@ -963,15 +1145,177 @@
             if (layer) layer.style.display = "none";
         },
 
+        // 임직원 샘플 데이터셋 (담당자 검색용)
+        managerList: [
+            { empId: "E1001", name: "홍길동", title: "수석", dept: "프론트엔드팀", email: "gdhong@example.com" },
+            { empId: "E1002", name: "이순신", title: "책임", dept: "클라우드인프라팀", email: "sslee@example.com" },
+            { empId: "E1003", name: "강감찬", title: "선임", dept: "품질보증QA팀", email: "gckang@example.com" },
+            { empId: "E1004", name: "유관순", title: "연구원", dept: "백엔드개발팀", email: "gsyu@example.com" },
+            { empId: "E1005", name: "김철수", title: "선임", dept: "보안운영팀", email: "cskim@example.com" },
+            { empId: "E1006", name: "박영희", title: "책임", dept: "UI/UX디자인팀", email: "yhpark@example.com" },
+            { empId: "E1007", name: "정도전", title: "수석", dept: "시스템아키텍처팀", email: "djjeong@example.com" },
+            { empId: "E1008", name: "최영", title: "팀장", dept: "플랫폼개발팀", email: "ychoi@example.com" },
+            { empId: "E1009", name: "신사임당", title: "수석", dept: "UI/UX기획팀", email: "sdshin@example.com" },
+            { empId: "E1010", name: "정약용", title: "선임", dept: "데이터엔지니어링팀", email: "yjeong@example.com" }
+        ],
+
+        _targetManagerRow: -1,
+
+        // 행 추가 기능
+        addRow: function() {
+            const newSeq = String(scwin.dataList.length + 1);
+            scwin.dataList.push({
+                seq: newSeq,
+                userName: "",
+                taskCodes: "",
+                remark: "신규 행"
+            });
+            scwin.setTabModified("tab1", true);
+
+            // 탭 뱃지 건수 갱신
+            const badge = document.querySelector('.ws-tab-btn[data-tab="tab1"] .ws-tab-badge');
+            if (badge) {
+                badge.textContent = scwin.dataList.length + "건";
+            }
+
+            scwin.renderTable();
+
+            // 새로 추가된 행의 담당자 input에 자동 포커스
+            setTimeout(() => {
+                const inputs = document.querySelectorAll("#grd_tbody .ws-grid-input-user");
+                if (inputs.length > 0) {
+                    const lastInput = inputs[inputs.length - 1];
+                    lastInput.focus();
+                }
+            }, 50);
+        },
+
+        // 담당자 input 포커스 시 ("입력후 엔터")
+        handleUserFocus: function(input) {
+            input.placeholder = "입력후 엔터";
+            input.select();
+        },
+
+        // 담당자 input 포커스 해제 시 ("클릭하여 입력" 복원 및 값 저장)
+        handleUserBlur: function(input, rowIdx) {
+            input.placeholder = "클릭하여 입력";
+            const val = input.value.trim();
+            if (scwin.dataList[rowIdx].userName !== val) {
+                scwin.dataList[rowIdx].userName = val;
+                scwin.setTabModified("tab1", true);
+            }
+        },
+
+        // 담당자 input 키다운 이벤트 (엔터 시 담당자 조회)
+        handleUserKeydown: function(e, input, rowIdx) {
+            if (e.key === "Enter" || e.keyCode === 13) {
+                e.preventDefault();
+                input.blur();
+                const keyword = input.value.trim();
+                scwin.openManagerSearchModal(rowIdx, keyword);
+            }
+        },
+
+        // 담당자 조회 팝업 열기
+        openManagerSearchModal: function(rowIdx, keyword) {
+            scwin._targetManagerRow = rowIdx;
+            const modal = document.getElementById("ws_mgr_modal_wrap");
+            const input = document.getElementById("ws_mgr_search_input");
+            if (modal) {
+                modal.style.display = "flex";
+                if (input) {
+                    input.value = keyword || "";
+                    input.focus();
+                }
+                scwin.renderManagerModalList(keyword || "");
+            }
+        },
+
+        // 담당자 모달 내 리스트 렌더링
+        renderManagerModalList: function(keyword) {
+            const tbody = document.getElementById("ws_mgr_tbl_body");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+            const kw = (keyword || "").toLowerCase().trim();
+
+            const filtered = scwin.managerList.filter(emp => {
+                return !kw || 
+                       emp.name.toLowerCase().includes(kw) || 
+                       emp.empId.toLowerCase().includes(kw) || 
+                       emp.dept.toLowerCase().includes(kw) || 
+                       emp.title.toLowerCase().includes(kw);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#94a3b8;">검색 조건과 일치하는 담당자가 없습니다.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(emp => {
+                const tr = document.createElement("tr");
+                tr.style.cursor = "pointer";
+                tr.innerHTML = `
+                    <td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0;">${emp.empId}</td>
+                    <td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0; font-weight:600; color:#1e293b;">${emp.name}</td>
+                    <td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0;">${emp.title}</td>
+                    <td style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0;">${emp.dept}</td>
+                    <td style="text-align:left; padding:8px; border-bottom:1px solid #e2e8f0; color:#64748b;">${emp.email}</td>
+                    <td style="text-align:center; padding:8px; border-bottom:1px solid #e2e8f0;">
+                        <button type="button" class="ws-btn-mgr-select">선택</button>
+                    </td>
+                `;
+
+                tr.addEventListener("dblclick", () => {
+                    scwin.selectManager(emp.name, emp.title);
+                });
+
+                const btn = tr.querySelector(".ws-btn-mgr-select");
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    scwin.selectManager(emp.name, emp.title);
+                });
+
+                tbody.appendChild(tr);
+            });
+        },
+
+        // 담당자 선택 처리
+        selectManager: function(name, title) {
+            if (scwin._targetManagerRow >= 0) {
+                const fullName = name + " " + title;
+                scwin.dataList[scwin._targetManagerRow].userName = fullName;
+                scwin.setTabModified("tab1", true);
+            }
+            scwin.closeManagerModal();
+            scwin.renderTable();
+        },
+
+        // 담당자 모달 닫기
+        closeManagerModal: function() {
+            const modal = document.getElementById("ws_mgr_modal_wrap");
+            if (modal) modal.style.display = "none";
+            scwin._targetManagerRow = -1;
+        },
+
         // 탭 1 메인 테이블 렌더링
         renderTable: function() {
             const tbody = document.getElementById("grd_tbody");
             tbody.innerHTML = "";
             scwin.dataList.forEach((row, idx) => {
                 const tr = document.createElement("tr");
+                const ph = row.userName ? "" : "클릭하여 입력";
                 tr.innerHTML = `
                     <td style="text-align:center;">${row.seq}</td>
-                    <td style="text-align:center; font-weight:500;">${row.userName}</td>
+                    <td style="text-align:center; padding:4px;">
+                        <input type="text" 
+                               class="ws-grid-input-user" 
+                               data-row="${idx}" 
+                               value="${row.userName || ""}" 
+                               placeholder="${ph}" 
+                               onfocus="scwin.handleUserFocus(this)" 
+                               onblur="scwin.handleUserBlur(this, ${idx})" 
+                               onkeydown="scwin.handleUserKeydown(event, this, ${idx})" />
+                    </td>
                     <td class="cell-multiline" data-row="${idx}">${scwin.fn_formatMultiCheck(row.taskCodes)}</td>
                     <td>${row.remark}</td>
                 `;

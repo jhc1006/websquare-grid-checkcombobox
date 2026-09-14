@@ -26,6 +26,7 @@
 | **3** | 다운로드에서 placeholder 안 나오게 가능? | 전달사항 미입력 시 상단 `infoArr` 생략, 그리드 미선택 시 화면엔 `(선택 없음)` 표시하되 엑셀 출력 시에는 빈 문자열(`""`)로 필터링하는 플래그(`scwin._isExcelDownloading`) 구현 | `grid_multicheck_combo.xml`<br>`demo_preview.html` |
 | **4** | 탭이 동적 생성될 때 메인 로딩 시 모든 탭 페이지를 사전 로딩하는 방법은? | WebSquare5의 탭 지연 렌더링(Lazy Loading) 극복 가이드 제공 (`alwaysDraw="true"`, `addTab` 옵션, WFrame 순차 비동기 로딩 큐, 데이터 선조회 아키텍처) | 기술 자문 문서화 |
 | **5** | 탭에 변경 내용 있을 때 탭 이동 확인창을 WebSquare confirm으로 묻기 | `ev:onbeforetabchange` 이벤트 가로채기, DataList `getModifiedIndex()` 수정 감지, 비동기 `$p.confirm` 연동 및 `_allowTabChange` 플래그를 통한 안전 탭 전환 구현 | `grid_multicheck_combo.xml`<br>`demo_preview.html` |
+| **6** | 메인 그리드 행추가 버튼 추가, 담당자 text type placeholder “클릭하여 입력” 클릭후 편집모드 “입력후 엔터” 엔터하면 담당자 조회 | 메인 그리드 상단 `[➕ 행 추가]` 버튼(`dlt_sample.insertRow()`), `userName` 컬럼의 포커스 상태별 동적 placeholder(`"클릭하여 입력"` ↔ `"입력후 엔터"`), 엔터 키 이벤트(`oneditkeydown`) 시 WebSquare 스타일 [담당자 조회] 모달 팝업 연동 | `grid_multicheck_combo.xml`<br>`demo_preview.html` |
 
 ---
 
@@ -165,6 +166,28 @@ scwin.fn_preloadRemainingTabs = function() {
        - 다시 호출된 `onbeforetabchange`에서 플래그를 검사하여 `true`를 반환함으로써 무한 루프 없이 부드럽게 탭 전환을 완료합니다.
   2. **DataList 수정 감지 API (`getModifiedIndex`)**:
      - `dlt_sample.getModifiedIndex().length > 0` 또는 `dlt_sample.isModified()`를 호출하여 실제 데이터가 변경되었는지를 정밀하게 감별합니다.
+
+---
+
+### Q6. 메인 그리드 행 추가 및 담당자 동적 Placeholder & 엔터 시 담당자 조회 연동
+* **요구사항**:
+  - 메인 그리드 상단에 `[➕ 행 추가]` 버튼 추가
+  - 담당자(`userName`) 컬럼을 `text` 타입으로 구성
+  - 평상시 빈 값: `“클릭하여 입력”` placeholder 표시
+  - 클릭 후 편집 모드(포커스): `“입력후 엔터”` placeholder로 동적 전환
+  - 입력 후 엔터(키코드 13) 입력 시: WebSquare 스타일 **[담당자 조회 (직원 검색)]** 팝업 모달을 호출하고 선택 사원을 그리드에 자동 바인딩
+* **구현 및 기술 솔루션**:
+  1. **행 추가 (`dlt_sample.insertRow()`)**:
+     - `seq`는 전체 행 수 기반 자동 채번, 기본값(`userName: ""`, `taskCodes: ""`, `remark: "신규 행"`) 설정
+     - `grd_main.setFocusedCell(newRowIdx, "userName", true)`로 신규 행 담당자 셀에 즉시 포커스 유도
+  2. **동적 Placeholder 전환 기법**:
+     - `userName` 컬럼에 `editModeEvent="onclick"`, `customFormatter="scwin.fn_formatUserName"` 적용
+     - 포커스 진입 시(`ev:oncellclick` / `handleUserFocus`): input 요소의 `placeholder`를 `"입력후 엔터"`로 동적 치환
+     - 포커스 아웃 시(`ev:oneditblur` / `handleUserBlur`): 빈 값일 경우 다시 `"클릭하여 입력"`으로 복원
+  3. **엔터 키 기반 담당자 조회 팝업 (`oneditkeydown`)**:
+     - `keyCode === 13` 감지 시 사용자가 입력 중인 검색어를 추출하여 `scwin.fn_openManagerSearch(row, keyword)` 실행
+     - WebSquare 블루 톤앤매너의 직원 검색 모달을 띄우고 사원명, 사번, 부서명 실시간 필터링
+     - 사원 더블클릭 또는 `[선택]` 버튼 클릭 시 `dlt_sample.setCellData(targetRow, "userName", empName + " " + empTitle)` 반영 후 모달 닫기
 
 ---
 
